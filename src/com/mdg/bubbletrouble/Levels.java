@@ -2,6 +2,8 @@ package com.mdg.bubbletrouble;
 
 import java.util.ArrayList;
 
+import com.mdg.bubbletrouble.AccelerometerControl.MyListener;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
@@ -14,12 +16,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.hardware.SensorEvent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class Levels extends Fragment {
+public class Levels extends Fragment implements MyListener{
 
 	float finalX, bottomX = -1;
 	static float arrowY, arrowX, currentX;
@@ -40,7 +44,6 @@ public class Levels extends Fragment {
 								// rectangle
 	private int spriteHeight;
 	static float H, W;
-	private stageOne s;
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	final int BASE_RADIUS = 15;
 	int NumberOfBalls;
@@ -48,7 +51,7 @@ public class Levels extends Fragment {
 	int ballX = 100;
 	int ballY = 150;
 	float ballVelocityX = (float) 2.2, ballVelocityY;
-	double risingFactor = 0.1;
+	double risingFactor = 0.1,sensorX;
     int currentLevel = 1;
     
     
@@ -94,30 +97,21 @@ public class Levels extends Fragment {
 		shoot = checkShoot;
 	}
 
-	public interface stageOne {
-		public void OnStageOneChanged(int changeStage, int restartStage);
-
-	}
-
+	
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		// This makes sure that the container activity has implemented
-		// the callback interface. If not, it throws an exception
-		try {
-			s = (stageOne) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnTouch");
-		}
+	public void processSensorEvent(SensorEvent event) {
+		// TODO Auto-generated method stub
+		sensorX = event.values[0];
 	}
-
+	
+	
+	//Defining View class
 	class myView extends View {
 
 		int Y;
 		int delay = 0;
-
+         AccelerometerControl acc = new AccelerometerControl();
+		
 		public myView(Context context) {
 			super(context);
 			// TODO Auto-generated constructor stub
@@ -277,7 +271,7 @@ public class Levels extends Fragment {
 					}
 				}
 
-				// c.drawBitmap(bcheck, 100, 100, null);
+				
 
 			}
 
@@ -289,8 +283,14 @@ public class Levels extends Fragment {
 				c.drawText("Get Ready", 4 * W / 10, 6 * H / 10, write);
 				delay++;
 			}
+			
+			 
 			invalidate();
+			acc.registerSensor();
+			Log.d("accelerate",""+sensorX);
 		}
 	}
+
+	
 
 }

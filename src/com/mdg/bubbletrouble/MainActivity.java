@@ -6,8 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
-public class MainActivity extends Activity implements controller.OnTouch,
-		Levels.stageOne {
+public class MainActivity extends Activity implements controller.OnTouch {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +30,5 @@ public class MainActivity extends Activity implements controller.OnTouch,
 		
 	}
 
-	@Override
-	public void OnStageOneChanged(int changeStage, int restartStage) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }
