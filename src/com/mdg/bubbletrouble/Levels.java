@@ -2,10 +2,7 @@ package com.mdg.bubbletrouble;
 
 import java.util.ArrayList;
 
-import com.mdg.bubbletrouble.AccelerometerControl.MyListener;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,17 +13,17 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.hardware.SensorEvent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class Levels extends Fragment implements MyListener{
+public class Levels extends Fragment{
 
-	float finalX, bottomX = -1;
-	static float arrowY, arrowX, currentX;
+	static float currentX = 0;
+	static float arrowY, arrowX;
+	float manVelocity,accelerometerSensorX;
 	boolean shoot = false;
 	int a = 0;
 	Bitmap []background = new Bitmap[3] ;
@@ -45,13 +42,13 @@ public class Levels extends Fragment implements MyListener{
 	private int spriteHeight;
 	static float H, W;
 	ArrayList<Ball> balls = new ArrayList<Ball>();
+	ArrayList<Integer> radius = new ArrayList<Integer>();
 	final int BASE_RADIUS = 15;
 	int NumberOfBalls;
-	ArrayList<Integer> radius = new ArrayList<Integer>();
 	int ballX = 100;
 	int ballY = 150;
 	float ballVelocityX = (float) 2.2, ballVelocityY;
-	double risingFactor = 0.1,sensorX;
+	double risingFactor = 0.1;
     int currentLevel = 1;
     
     
@@ -64,19 +61,26 @@ public class Levels extends Fragment implements MyListener{
 			Ball b1 = new Ball(100,150,risingFactor);
 			balls.add(b1);
 			radius.add(2 * BASE_RADIUS);
-			// radius.add(4*BASE_RADIUS);
-
 			break;
+		
 		case 2:
-			NumberOfBalls = 1;
+			NumberOfBalls = 2;
 			Ball b2 = new Ball(100,150,risingFactor);
 			Ball b3 = new Ball(600,150,risingFactor);
 			balls.add(b2);
 			balls.add(b3);
-			radius.add(8 * BASE_RADIUS);
 			radius.add(4 * BASE_RADIUS);
+			radius.add(2 * BASE_RADIUS);
 			break;
+		
 		case 3:
+			NumberOfBalls = 1;
+			Ball b4 = new Ball(100,200,risingFactor);
+			balls.add(b4);
+			radius.add(8 * BASE_RADIUS);
+			break;
+		case 4:
+			
 			break;
 		}
 		
@@ -91,18 +95,15 @@ public class Levels extends Fragment implements MyListener{
 
 	}
 
-	public void getCoordinate(float position, boolean checkShoot) {
+	public void getCoordinate(float values, boolean checkShoot) {
 		// TODO Auto-generated method stub
-		bottomX = position;
+		accelerometerSensorX=values;
 		shoot = checkShoot;
+		Log.e("accelerate",""+accelerometerSensorX);
+		
 	}
-
 	
-	@Override
-	public void processSensorEvent(SensorEvent event) {
-		// TODO Auto-generated method stub
-		sensorX = event.values[0];
-	}
+
 	
 	
 	//Defining View class
@@ -110,7 +111,7 @@ public class Levels extends Fragment implements MyListener{
 
 		int Y;
 		int delay = 0;
-         AccelerometerControl acc = new AccelerometerControl();
+        float mid;
 		
 		public myView(Context context) {
 			super(context);
@@ -152,6 +153,22 @@ public class Levels extends Fragment implements MyListener{
 			sourceRect.right = sourceRect.left + spriteWidth;
 		}
 
+		void gettingManVelocity(){
+			manVelocity = 2*accelerometerSensorX;
+			if(Math.abs(manVelocity)<1){
+				manVelocity = 0;
+			}
+			if(Math.abs(manVelocity)>3){
+				manVelocity =(manVelocity/Math.abs(manVelocity))*3;
+			}
+			currentX = currentX+manVelocity;
+			if(currentX<0){
+				currentX=0;
+			}
+            if(currentX>W-man.getWidth()){
+				currentX=W-man.getWidth();
+			}
+		}
 		@SuppressLint("DrawAllocation")
 		@Override
 		protected void onDraw(Canvas c) {
@@ -161,6 +178,9 @@ public class Levels extends Fragment implements MyListener{
 			Rect dest = new Rect(0, 0, getWidth(), getHeight());
 			Paint paint = new Paint();
 			paint.setFilterBitmap(true);
+			if(currentLevel>3){
+				currentLevel =1;
+			}
 			c.drawBitmap(background[currentLevel-1], null, dest, paint);
 			// ---------------------------------------------
 
@@ -172,8 +192,7 @@ public class Levels extends Fragment implements MyListener{
 
 				if (a == 0) {
 					arrowY = c.getHeight();
-					arrowX = currentX + man.getWidth() / 2 - arrow.getWidth()
-							/ 2;
+					arrowX = currentX + man.getWidth() / 2 - arrow.getWidth()/ 2;
 				}
 				if (shoot == true) {
 					a = 1;
@@ -195,35 +214,21 @@ public class Levels extends Fragment implements MyListener{
 
 				spriteHeight = man.getHeight();
 				spriteWidth = man_right.getWidth() / 4;
-				Y = c.getHeight() - man.getHeight();
-				int mid = c.getWidth() / 2 - man.getWidth() / 2;
-				finalX = (float) ((bottomX) * (2.229883));
-
+				Y = (int) (H - man.getHeight());
+				 mid = W / 2 - man.getWidth() / 2;
+				
 				Rect destRect = new Rect((int) currentX, Y,
 						(int) (currentX + spriteWidth), Y + spriteHeight);
 
-				if (finalX < 0) {
-
-					currentX = mid;
-					c.drawBitmap(man, null, destRect, null);
-				}
-				if (finalX > currentX) {
-
-					c.drawBitmap(man_right, sourceRect, destRect, null);
-					currentX = currentX + 3;
-					if (currentX == finalX || currentX > finalX) {
-						currentX = finalX;
-					}
-				} else if (finalX < currentX && finalX > 0) {
-
-					c.drawBitmap(man_left, sourceRect, destRect, null);
-					currentX = currentX - 3;
-					if (currentX == finalX || currentX < finalX) {
-						currentX = finalX;
-					}
-				} else if (finalX == currentX) {
-					c.drawBitmap(man, null, destRect, null);
-				}
+				
+				gettingManVelocity();
+				
+				if(manVelocity>0){
+					c.drawBitmap(man_right,sourceRect, destRect, null);
+				}else
+				if(manVelocity<0){
+					c.drawBitmap(man_left,sourceRect, destRect, null);
+				}else c.drawBitmap(man,null, destRect, null);
 				// ----------------------------------------------------------------------------------
 				// Drawing balls
 
@@ -237,11 +242,11 @@ public class Levels extends Fragment implements MyListener{
 						ballVelocityY = 6 + (radius.get(i) / BASE_RADIUS);
 					}
 
-					balls.get(i).movingBall(radius.get(i), ballVelocityY, risingFactor);
+					balls.get(i).moveBall(radius.get(i), ballVelocityY, risingFactor);
 					ballDrawable.setBounds((int) balls.get(i).ballX,
-							(int) balls.get(i).ballY, (int) balls.get(i).ballX
-									+ radius.get(i), (int) balls.get(i).ballY
-									+ radius.get(i));
+							(int) balls.get(i).ballY, 
+							(int) balls.get(i).ballX+ radius.get(i),
+							(int) balls.get(i).ballY+ radius.get(i));
 					ballDrawable.draw(c);
 
 					if (balls.get(i).ballHit == 1) {
@@ -260,14 +265,13 @@ public class Levels extends Fragment implements MyListener{
 							balls.add(q);
 							radius.add(radius.get(i));
 							
-							// Log.d("rFGame",""+risingFactor);
-
 						}
 					}
 
 					if(balls.isEmpty()){
 						currentLevel++;
 						initializingNumberOfBalls(currentLevel);
+						delay=0;
 					}
 				}
 
@@ -276,6 +280,7 @@ public class Levels extends Fragment implements MyListener{
 			}
 
 			if (delay < 102) {
+				currentX = mid;
 				Paint write = new Paint();
 				write.setColor(Color.rgb(253, 238, 0));
 				write.setTextSize(50);
@@ -283,13 +288,27 @@ public class Levels extends Fragment implements MyListener{
 				c.drawText("Get Ready", 4 * W / 10, 6 * H / 10, write);
 				delay++;
 			}
+
 			
-			 
+			
+		
 			invalidate();
-			acc.registerSensor();
-			Log.d("accelerate",""+sensorX);
+			
+			
 		}
 	}
+
+
+
+
+
+	
+
+	
+
+
+
+	
 
 	
 

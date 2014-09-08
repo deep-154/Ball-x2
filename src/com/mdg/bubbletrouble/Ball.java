@@ -26,7 +26,7 @@ public class Ball {
 		velocityY =(float) c;
 	}
 
-	void movingBall(float radius,float vY, double n) {
+	void moveBall(float radius,float vY, double n) {
 		float side_strip = (float) (0.0134 * W);
 		 
 			H = Levels.H;
