@@ -14,14 +14,13 @@ import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class Levels extends Fragment{
 
-	static float currentX = 0;
+	static float manX = 0,manY;
 	static float arrowY, arrowX;
 	float manVelocity,accelerometerSensorX;
 	boolean shoot = false;
@@ -40,20 +39,35 @@ public class Levels extends Fragment{
 	private int spriteWidth; // the width of the sprite to calculate the cut out
 								// rectangle
 	private int spriteHeight;
-	static float H, W;
+	static float gameAreaHeight, gameAreaWidth;
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	ArrayList<Integer> radius = new ArrayList<Integer>();
 	final int BASE_RADIUS = 15;
 	int NumberOfBalls;
 	int ballX = 100;
 	int ballY = 150;
-	float ballVelocityX = (float) 2.2, ballVelocityY;
+	float ballVelocityX = (float) 2.2;
 	double risingFactor = 0.1;
     int currentLevel = 1;
     
+    float mid;
+    
+    @Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// Inflate the layout for this fragment
+		return new myView(getActivity());
+
+	}
+    
+    public void initializeLevels(){
+    	initializeNumberOfBalls(currentLevel);
+    	initializeGamePanelArena(currentLevel);
+    	initializeListOfPowers(currentLevel);
+    }
     
     
-	void initializingNumberOfBalls(int level) {
+    	void initializeNumberOfBalls(int level) {
 
 		switch (level) {
 		case 1:
@@ -80,38 +94,105 @@ public class Levels extends Fragment{
 			radius.add(8 * BASE_RADIUS);
 			break;
 		case 4:
-			
+			NumberOfBalls = 3;
+			Ball b5 = new Ball(100,150,risingFactor);
+			Ball b6 = new Ball(600,100,risingFactor);
+			Ball b7 = new Ball(1000,200,risingFactor);
+			balls.add(b5);
+			balls.add(b6);
+			balls.add(b7);
+			radius.add(4 * BASE_RADIUS);
+			radius.add(2 * BASE_RADIUS);
+			radius.add(8 * BASE_RADIUS);
 			break;
 		}
 		
 		
 	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		return new myView(getActivity());
-
-	}
+        void initializeGamePanelArena(int level){
+        	
+       // gameAreaHeight = 
+        	
+     
+        }
+        void initializeListOfPowers(int level){
+        }
+        
+	
 
 	public void getCoordinate(float values, boolean checkShoot) {
 		// TODO Auto-generated method stub
 		accelerometerSensorX=values;
 		shoot = checkShoot;
-		Log.e("accelerate",""+accelerometerSensorX);
 		
 	}
 	
+    public void updateGame(){
+    	updateArrowPosition();
+    	updateManState();
+    	updateBallPosition();
+    }
+	void updateArrowPosition(){
+		if (a == 0) {
+			arrowY = gameAreaHeight;
+			arrowX = manX + man.getWidth() / 2 - arrow.getWidth()/ 2;
+		}
+		if (shoot == true) {
+			a = 1;
+		}
+		if (a == 1) {
+			arrowY = arrowY - 8;
 
-	
+			if (arrowY < 0) {
+				arrowY = gameAreaHeight;
+				a = 0;
+			}
+		}
+	}
+	void updateManState(){
+		long gameTime = System.currentTimeMillis();
+		if (gameTime > frameTicker + framePeriod) {
+			frameTicker = gameTime;
+			// incrementing the frame
+			currentFrame++;
+			if (currentFrame >= frameNr) {
+				currentFrame = 0;
+			}
+		}
+		// defining the rectangle to cut out sprite
+		sourceRect.left = currentFrame * spriteWidth;
+		sourceRect.right = sourceRect.left + spriteWidth;
+
+		spriteHeight = man.getHeight();
+		spriteWidth = man_right.getWidth() / 4;
+		manY = (int) (gameAreaHeight - man.getHeight());
+		 mid = gameAreaWidth / 2 - man.getWidth() / 2;
+		manVelocity = 2*accelerometerSensorX;
+		if(Math.abs(manVelocity)<1){
+			manVelocity = 0;
+		}
+		if(Math.abs(manVelocity)>3){
+			manVelocity =(manVelocity/Math.abs(manVelocity))*3;
+		}
+		manX = manX+manVelocity;
+		if(manX<0){
+			manX=0;
+		}
+        if(manX>gameAreaWidth-man.getWidth()){
+			manX=gameAreaWidth-man.getWidth();
+		}
+	}
+	void updateBallPosition(){
+		
+		for (int i = 0; i < balls.size(); i++) {		
+			balls.get(i).moveBall(radius.get(i));
+		}
+	}
 	
 	//Defining View class
 	class myView extends View {
-
-		int Y;
+		
 		int delay = 0;
-        float mid;
 		
 		public myView(Context context) {
 			super(context);
@@ -135,40 +216,10 @@ public class Levels extends Fragment{
 			framePeriod = 150;
 			frameTicker = 0l;
 
-			initializingNumberOfBalls(currentLevel);
+			initializeLevels();
 		}
 
-		void walking() {
-			long gameTime = System.currentTimeMillis();
-			if (gameTime > frameTicker + framePeriod) {
-				frameTicker = gameTime;
-				// incrementing the frame
-				currentFrame++;
-				if (currentFrame >= frameNr) {
-					currentFrame = 0;
-				}
-			}
-			// defining the rectangle to cut out sprite
-			sourceRect.left = currentFrame * spriteWidth;
-			sourceRect.right = sourceRect.left + spriteWidth;
-		}
-
-		void gettingManVelocity(){
-			manVelocity = 2*accelerometerSensorX;
-			if(Math.abs(manVelocity)<1){
-				manVelocity = 0;
-			}
-			if(Math.abs(manVelocity)>3){
-				manVelocity =(manVelocity/Math.abs(manVelocity))*3;
-			}
-			currentX = currentX+manVelocity;
-			if(currentX<0){
-				currentX=0;
-			}
-            if(currentX>W-man.getWidth()){
-				currentX=W-man.getWidth();
-			}
-		}
+		
 		@SuppressLint("DrawAllocation")
 		@Override
 		protected void onDraw(Canvas c) {
@@ -184,45 +235,23 @@ public class Levels extends Fragment{
 			c.drawBitmap(background[currentLevel-1], null, dest, paint);
 			// ---------------------------------------------
 
-			H = getHeight();
-			W = getWidth();
+			gameAreaHeight = getHeight();
+			gameAreaWidth = getWidth();
 			if (delay > 100) {
 
+				updateGame();
 				// shooting the ball
-
-				if (a == 0) {
-					arrowY = c.getHeight();
-					arrowX = currentX + man.getWidth() / 2 - arrow.getWidth()/ 2;
-				}
-				if (shoot == true) {
-					a = 1;
-				}
-				if (a == 1) {
-					arrowY = arrowY - 8;
-
-					Rect Rec2 = new Rect((int) arrowX, (int) arrowY,
-							(int) (arrowX + arrow.getWidth()), c.getHeight());
-					c.drawBitmap(arrow, null, Rec2, null);
-					if (arrowY < 0) {
-						arrowY = H;
-						a = 0;
-					}
-				}
+				Rect Rec2 = new Rect((int) arrowX, (int) arrowY,
+						(int) (arrowX + arrow.getWidth()), (int) gameAreaHeight);
+				c.drawBitmap(arrow, null, Rec2, null);
+				
 				// --------------------------------------------
 				// walking the man with help of slider
-				walking();
-
-				spriteHeight = man.getHeight();
-				spriteWidth = man_right.getWidth() / 4;
-				Y = (int) (H - man.getHeight());
-				 mid = W / 2 - man.getWidth() / 2;
 				
-				Rect destRect = new Rect((int) currentX, Y,
-						(int) (currentX + spriteWidth), Y + spriteHeight);
-
 				
-				gettingManVelocity();
 				
+				 Rect destRect = new Rect((int) manX,(int) manY,
+						(int) (manX + spriteWidth), (int)manY + spriteHeight);
 				if(manVelocity>0){
 					c.drawBitmap(man_right,sourceRect, destRect, null);
 				}else
@@ -236,13 +265,9 @@ public class Levels extends Fragment{
 				ballDrawable.getPaint().setColor(Color.GREEN);
 
 				for (int i = 0; i < balls.size(); i++) {
-					if (radius.get(i) > 4 * BASE_RADIUS) {
-						ballVelocityY = (float) (6 + (radius.get(i) / (1.5 * BASE_RADIUS)));
-					} else {
-						ballVelocityY = 6 + (radius.get(i) / BASE_RADIUS);
-					}
+					
 
-					balls.get(i).moveBall(radius.get(i), ballVelocityY, risingFactor);
+					
 					ballDrawable.setBounds((int) balls.get(i).ballX,
 							(int) balls.get(i).ballY, 
 							(int) balls.get(i).ballX+ radius.get(i),
@@ -251,7 +276,7 @@ public class Levels extends Fragment{
 
 					if (balls.get(i).ballHit == 1) {
 						radius.set(i, radius.get(i) / 2);
-						arrowY = H;
+						arrowY = gameAreaHeight;
 						a = 0;
 
 						if (radius.get(i) < BASE_RADIUS) {
@@ -268,9 +293,10 @@ public class Levels extends Fragment{
 						}
 					}
 
+					
 					if(balls.isEmpty()){
 						currentLevel++;
-						initializingNumberOfBalls(currentLevel);
+						initializeNumberOfBalls(currentLevel);
 						delay=0;
 					}
 				}
@@ -280,18 +306,15 @@ public class Levels extends Fragment{
 			}
 
 			if (delay < 102) {
-				currentX = mid;
+				manX = mid;
 				Paint write = new Paint();
 				write.setColor(Color.rgb(253, 238, 0));
 				write.setTextSize(50);
 				write.setStrokeWidth(30);
-				c.drawText("Get Ready", 4 * W / 10, 6 * H / 10, write);
+				c.drawText("Get Ready", 4 * gameAreaWidth / 10, 6 * gameAreaHeight / 10, write);
 				delay++;
 			}
 
-			
-			
-		
 			invalidate();
 			
 			

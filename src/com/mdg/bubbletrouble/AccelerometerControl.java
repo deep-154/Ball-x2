@@ -35,7 +35,6 @@ public class AccelerometerControl extends Activity implements SensorEventListene
 	}
 	
 	public float getValues(){
-    //	Log.d("accelerate",""+sensorX);
 		return sensorX;
 		
 	}

@@ -16,7 +16,7 @@ public class Ball {
 	float arrowX, arrowY, manX, manY;
 	int ballHit = 0;
 	int manHit = 0;
-	final int BASE_RADIUS = 20;
+	final int BASE_RADIUS = 15;
     
 	
 	public Ball(int a, int b,double c) {
@@ -26,17 +26,17 @@ public class Ball {
 		velocityY =(float) c;
 	}
 
-	void moveBall(float radius,float vY, double n) {
+	void moveBall(float radius) {
 		float side_strip = (float) (0.0134 * W);
 		 
-			H = Levels.H;
-			W = Levels.W;
+			H = Levels.gameAreaHeight;
+			W = Levels.gameAreaWidth;
 			arrowX = Levels.arrowX;
 			arrowY = Levels.arrowY;
-			manX = Levels.currentX;
+			manX = Levels.manX;
 		    manY = H - MAN_HEIGHT;
 		    ballHit = 0;
-		    
+		    manHit =0;
 		    
 			ballX = ballX + velocityX;
 			ballY = ballY + velocityY;
@@ -44,8 +44,12 @@ public class Ball {
 				velocityX = -velocityX;
 			}
 			if ((ballY > H - radius)) {
-
-				velocityY = (float) (-1 * vY);
+				if (radius > 4 * BASE_RADIUS) {
+					velocityY = (float) ((-1)*(6 + (radius / (1.5 * BASE_RADIUS))));
+				} else {
+					velocityY = (float) (-1 *( 6 +(radius/ BASE_RADIUS)));
+				}
+				
 			}
 			if (velocityY > 0) {
 				velocityY = velocityY + gravity;
@@ -63,7 +67,6 @@ public class Ball {
 					velocityX = velocityX*-1;
 					}
 					velocityY =-4;
-					 Log.d("Ball",""+velocityY);
 					}
 			}
 		}

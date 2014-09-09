@@ -9,7 +9,6 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 
 public class MainActivity extends Activity implements controller.OnTouch {
 
@@ -37,7 +36,7 @@ public class MainActivity extends Activity implements controller.OnTouch {
 	
 
 	@Override
-	public void onCoordinateSelected(float position, boolean checkShoot) {
+	public void onCoordinateSelected(boolean checkShoot) {
 		// TODO Auto-generated method stub
 
 			Levels one = (Levels) getFragmentManager().findFragmentByTag("one");

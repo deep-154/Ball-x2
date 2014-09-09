@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,12 +21,11 @@ public class controller extends Fragment{
 	float a =-1;
 	boolean tag = false;
 	float time;
-	int lifeGone = 1;
-	int stageChanged = 0;
+	
 	int delay= 0;
 	// Container Activity must implement this interface
     public interface OnTouch {
-        public void onCoordinateSelected(float position,boolean checkShoot);
+        public void onCoordinateSelected(boolean checkShoot);
        
     }
 
@@ -45,17 +43,9 @@ public class controller extends Fragment{
         }
     }
     
-    public void OnStageOneChanged(int changeStage, int restartStage) {
-		// TODO Auto-generated method stub
-		stageChanged = changeStage;
-		lifeGone = restartStage;
-	}
+    
 
-    public void OnStageTwoChanged(int changeStage, int restartStage) {
-		// TODO Auto-generated method stub
-    	stageChanged = changeStage;
-		lifeGone = restartStage;
-	}
+   
 	public class view2 extends View{
 
 		Bitmap background_bottom,fireUp;
@@ -130,26 +120,7 @@ public class controller extends Fragment{
 			Rect r2 = new Rect( (82*width/100),4*height/10, width, height);
 			c.drawBitmap(fireUp, null, r2, p);
 			//----------------------------------------------
-			//setting slider
-			float touchBarWidth  = 43*width/100;
-			Paint grey = new Paint();
-			alpha = 80;
-            if(x<touchBarWidth&&y>56* height/100){
-				alpha = alpha+50;			
-			}
-            if(check == true){
-          	  alpha =80;          	 
-            }
-        
-			grey.setARGB(alpha, 242, 243, 244);
-			c.drawRect(0,56* height/100, touchBarWidth, height, grey);
-		//-------------------------------------------------------------------------------------------
-			if(stageChanged==1||lifeGone ==1){
-				x=-1;
-			}
-			if(x<touchBarWidth&&y>56* height/100){
-				a = x;
-			}
+			
 			
 			if(X>82*width/100&&y>4*height/10||Y>82*width/100&&secondY>4*height/10){
 				tag = true;
@@ -157,7 +128,7 @@ public class controller extends Fragment{
 				Y=-1;
 			}
 		
-			mCallback.onCoordinateSelected(a, tag);
+			mCallback.onCoordinateSelected(tag);
 			tag = false;
 	   //------------------------------------------------------------------------------------------------------
 			float side_strip = (float) (0.011 * width);
@@ -165,27 +136,23 @@ public class controller extends Fragment{
 			
 			Paint red = new Paint();
 			red.setColor(Color.rgb(204, 0, 0));
-			if(lifeGone == 1||stageChanged==1){
+			
 				time = this.getWidth()-side_strip2;
 				//lifeGone = 0;
-			}
+			
 			c.drawRect(side_strip, 7*height/100,time , 26*height/100, red);
 			
-			if(lifeGone ==1||stageChanged==1){
+			
 				delay++;
-			}else delay = 101;
+			
 			
 			if(delay>100){
 			time = (float) (time-0.5);			
 			if(time<side_strip){
-				//lifeGone = 1;
+				time = this.getWidth()-side_strip2;
+			}
 			}
 			
-			lifeGone = 0;
-			stageChanged =0;
-			delay=0;
-			}
-			//Log.v("l2", "" + lifeGone);
 			invalidate();
 			
 		}
