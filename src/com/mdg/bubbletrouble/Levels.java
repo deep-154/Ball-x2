@@ -14,6 +14,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +27,11 @@ public class Levels extends Fragment{
 	float manVelocity,accelerometerSensorX;
 	boolean shoot = false;
 	int a = 0;
-	Bitmap []background = new Bitmap[3] ;
+	Bitmap []background = new Bitmap[6] ;
 	Bitmap man, man_left, man_right,arrow;
-
 	private ShapeDrawable ballDrawable;
 
-	private Rect sourceRect; // the rectangle to be drawn from the animation
-								// bitmap
+	private Rect sourceRect; // the rectangle to be drawn from the animation  bitmap								
 	private int frameNr = 4; // number of frames in animation
 	private int currentFrame; // the current frame
 	private long frameTicker; // the time of the last frame update
@@ -49,7 +49,7 @@ public class Levels extends Fragment{
 	float ballVelocityX = (float) 2.2;
 	double risingFactor = 0.1;
     int currentLevel = 1;
-    
+    int delay = 0;
     float mid;
     
     @Override
@@ -60,7 +60,14 @@ public class Levels extends Fragment{
 
 	}
     
-    public void initializeLevels(){
+    public void getCoordinate(float values, boolean checkShoot) {
+		// TODO Auto-generated method stub
+		accelerometerSensorX=values;
+		shoot = checkShoot;
+		
+	}
+    
+    public void initializeGame(){
     	initializeNumberOfBalls(currentLevel);
     	initializeGamePanelArena(currentLevel);
     	initializeListOfPowers(currentLevel);
@@ -111,23 +118,18 @@ public class Levels extends Fragment{
 	}
         void initializeGamePanelArena(int level){
         	
-       // gameAreaHeight = 
-        	
-     
+        	DisplayMetrics displaymetrics = new DisplayMetrics();
+        	getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        	gameAreaHeight = (float) ((0.73)*(displaymetrics.heightPixels));
+        	gameAreaWidth = displaymetrics.widthPixels; 
         }
         void initializeListOfPowers(int level){
         }
+       
         
-	
-
-	public void getCoordinate(float values, boolean checkShoot) {
-		// TODO Auto-generated method stub
-		accelerometerSensorX=values;
-		shoot = checkShoot;
-		
-	}
-	
+        
     public void updateGame(){
+    	
     	updateArrowPosition();
     	updateManState();
     	updateBallPosition();
@@ -150,6 +152,7 @@ public class Levels extends Fragment{
 		}
 	}
 	void updateManState(){
+		
 		long gameTime = System.currentTimeMillis();
 		if (gameTime > frameTicker + framePeriod) {
 			frameTicker = gameTime;
@@ -166,7 +169,7 @@ public class Levels extends Fragment{
 		spriteHeight = man.getHeight();
 		spriteWidth = man_right.getWidth() / 4;
 		manY = (int) (gameAreaHeight - man.getHeight());
-		 mid = gameAreaWidth / 2 - man.getWidth() / 2;
+		mid = gameAreaWidth / 2 - man.getWidth() / 2;
 		manVelocity = 2*accelerometerSensorX;
 		if(Math.abs(manVelocity)<1){
 			manVelocity = 0;
@@ -186,23 +189,110 @@ public class Levels extends Fragment{
 		
 		for (int i = 0; i < balls.size(); i++) {		
 			balls.get(i).moveBall(radius.get(i));
+			
+			if (balls.get(i).manHit == 1) {
+				balls.clear();
+				radius.clear();
+				a=0;
+				initializeNumberOfBalls(currentLevel);
+				delay=0;
+			}
+			
+			
+			
 		}
 	}
+	
+	
+	
+	public void renderGame(Canvas c){
+		renderArrow(c);
+		renderMan(c);
+		renderBalls(c);
+	}
+	
+	void renderArrow(Canvas c){
+		Rect Rec2 = new Rect((int) arrowX, (int) arrowY,
+				(int) (arrowX + arrow.getWidth()), (int) gameAreaHeight);
+		c.drawBitmap(arrow, null, Rec2, null);
+		
+	}
+	void renderMan(Canvas c){
+		Rect destRect = new Rect((int) manX,(int) manY,
+				(int) (manX + spriteWidth), (int)manY + spriteHeight);
+		if(manVelocity>0){
+			c.drawBitmap(man_right,sourceRect, destRect, null);
+		}else
+		if(manVelocity<0){
+			c.drawBitmap(man_left,sourceRect, destRect, null);
+		}else c.drawBitmap(man,null, destRect, null);
+	}
+	void renderBalls(Canvas c){
+		
+		ballDrawable = new ShapeDrawable(new OvalShape());
+			
+		for (int i = 0; i < balls.size(); i++) {
+			
+			ballDrawable.getPaint().setColor(Color.GREEN);
+			
+			ballDrawable.setBounds((int) balls.get(i).ballX,
+					(int) balls.get(i).ballY, 
+					(int) balls.get(i).ballX+ radius.get(i),
+					(int) balls.get(i).ballY+ radius.get(i));
+			ballDrawable.draw(c);
+		}
+	}
+	
+	public void detectCollison(){
+		collisonBallArrow();
+	}
+	
+	void collisonBallArrow(){
+		for(int i = 0;i<balls.size();i++){
+		if (balls.get(i).ballHit == 1) {
+			radius.set(i, radius.get(i) / 2);
+			arrowY = gameAreaHeight;
+			a = 0;
+
+			if (radius.get(i) < BASE_RADIUS) {
+				balls.remove(i);
+				radius.remove(i);
+			} else {
+				ballX = (int) (balls.get(i).ballX + radius.get(i));
+				ballY = (int) balls.get(i).ballY;
+				risingFactor = -4;
+				Ball q = new Ball(ballX,ballY,risingFactor);
+				balls.add(q);
+				radius.add(radius.get(i));
+				
+			}
+		}	
+		}	
+	}
+	
+	
+	
 	
 	//Defining View class
 	class myView extends View {
 		
-		int delay = 0;
+		
 		
 		public myView(Context context) {
 			super(context);
 			// TODO Auto-generated constructor stub
 			background[0] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.level_one);
+					R.drawable.lv1);
 			background[1] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.level_two);
+					R.drawable.lv2);
 			background[2] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.level_three);
+					R.drawable.lv3);
+			background[3] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.lv4);
+			background[4] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.lv5);
+			background[5] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.lv6);
 			man = BitmapFactory.decodeResource(getResources(), R.drawable.man);
 			man_left = BitmapFactory.decodeResource(getResources(),
 					R.drawable.man_left);
@@ -210,18 +300,17 @@ public class Levels extends Fragment{
 					R.drawable.man_right);
 			arrow = BitmapFactory.decodeResource(getResources(),
 					R.drawable.arrow);
-			currentFrame = 0;
 			sourceRect = new Rect(0, 0, man_right.getWidth() / 4,
 					man_right.getHeight());
 			framePeriod = 150;
 			frameTicker = 0l;
 
-			initializeLevels();
+			initializeGame();
 		}
 
 		
-		@SuppressLint("DrawAllocation")
-		@Override
+		
+		@SuppressLint("DrawAllocation") @Override
 		protected void onDraw(Canvas c) {
 			// TODO Auto-generated method stub
 			super.onDraw(c);
@@ -229,79 +318,23 @@ public class Levels extends Fragment{
 			Rect dest = new Rect(0, 0, getWidth(), getHeight());
 			Paint paint = new Paint();
 			paint.setFilterBitmap(true);
-			if(currentLevel>3){
-				currentLevel =1;
-			}
+			
 			c.drawBitmap(background[currentLevel-1], null, dest, paint);
 			// ---------------------------------------------
 
-			gameAreaHeight = getHeight();
-			gameAreaWidth = getWidth();
+			
 			if (delay > 100) {
 
 				updateGame();
-				// shooting the ball
-				Rect Rec2 = new Rect((int) arrowX, (int) arrowY,
-						(int) (arrowX + arrow.getWidth()), (int) gameAreaHeight);
-				c.drawBitmap(arrow, null, Rec2, null);
+				renderGame(c);
+				detectCollison();
 				
-				// --------------------------------------------
-				// walking the man with help of slider
+				if(balls.isEmpty()){
+					currentLevel++;
+					initializeNumberOfBalls(currentLevel);
+					delay=0;
 				
-				
-				
-				 Rect destRect = new Rect((int) manX,(int) manY,
-						(int) (manX + spriteWidth), (int)manY + spriteHeight);
-				if(manVelocity>0){
-					c.drawBitmap(man_right,sourceRect, destRect, null);
-				}else
-				if(manVelocity<0){
-					c.drawBitmap(man_left,sourceRect, destRect, null);
-				}else c.drawBitmap(man,null, destRect, null);
-				// ----------------------------------------------------------------------------------
-				// Drawing balls
-
-				ballDrawable = new ShapeDrawable(new OvalShape());
-				ballDrawable.getPaint().setColor(Color.GREEN);
-
-				for (int i = 0; i < balls.size(); i++) {
-					
-
-					
-					ballDrawable.setBounds((int) balls.get(i).ballX,
-							(int) balls.get(i).ballY, 
-							(int) balls.get(i).ballX+ radius.get(i),
-							(int) balls.get(i).ballY+ radius.get(i));
-					ballDrawable.draw(c);
-
-					if (balls.get(i).ballHit == 1) {
-						radius.set(i, radius.get(i) / 2);
-						arrowY = gameAreaHeight;
-						a = 0;
-
-						if (radius.get(i) < BASE_RADIUS) {
-							balls.remove(i);
-							radius.remove(i);
-						} else {
-							ballX = (int) (balls.get(i).ballX + radius.get(i));
-							ballY = (int) balls.get(i).ballY;
-							risingFactor = -4;
-							Ball q = new Ball(ballX,ballY,risingFactor);
-							balls.add(q);
-							radius.add(radius.get(i));
-							
-						}
-					}
-
-					
-					if(balls.isEmpty()){
-						currentLevel++;
-						initializeNumberOfBalls(currentLevel);
-						delay=0;
-					}
 				}
-
-				
 
 			}
 

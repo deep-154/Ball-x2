@@ -1,6 +1,5 @@
 package com.mdg.bubbletrouble;
 
-import android.util.Log;
 
 
 public class Ball {
@@ -27,7 +26,7 @@ public class Ball {
 	}
 
 	void moveBall(float radius) {
-		float side_strip = (float) (0.0134 * W);
+		//float side_strip = (float) (0.0134 * W);
 		 
 			H = Levels.gameAreaHeight;
 			W = Levels.gameAreaWidth;
@@ -40,7 +39,7 @@ public class Ball {
 		    
 			ballX = ballX + velocityX;
 			ballY = ballY + velocityY;
-			if ((ballX > W - radius - side_strip) || (ballX < side_strip)) {
+			if ((ballX > W - radius ) || (ballX < 0)) {
 				velocityX = -velocityX;
 			}
 			if ((ballY > H - radius)) {
