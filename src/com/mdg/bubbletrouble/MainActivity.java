@@ -29,7 +29,6 @@ public class MainActivity extends Activity implements controller.OnTouch {
 		acc.sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 	    acc.sensor = acc.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	    acc.registerSensor();
-	    
 	}
 
 
@@ -42,6 +41,7 @@ public class MainActivity extends Activity implements controller.OnTouch {
 			Levels one = (Levels) getFragmentManager().findFragmentByTag("one");
 			one.getCoordinate(acc.getValues(), checkShoot);	
 			//Log.v("accelerate",""+acc.getValues());
+			
 	}
 
 	@Override
@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements controller.OnTouch {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		acc.unregisterSensor();
+		
 	}
 
 	

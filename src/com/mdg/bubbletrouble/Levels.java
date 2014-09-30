@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,7 +16,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,7 @@ public class Levels extends Fragment{
 	static float arrowY, arrowX;
 	float manVelocity,accelerometerSensorX;
 	boolean shoot = false;
-	int a = 0;
+	int isShooting = 0;
 	Bitmap []background = new Bitmap[6] ;
 	Bitmap man, man_left, man_right,arrow;
 	private ShapeDrawable ballDrawable;
@@ -51,6 +51,7 @@ public class Levels extends Fragment{
     int currentLevel = 1;
     int delay = 0;
     float mid;
+    SharedPreferences sharedPreferences;
     
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,19 +136,19 @@ public class Levels extends Fragment{
     	updateBallPosition();
     }
 	void updateArrowPosition(){
-		if (a == 0) {
+		if (isShooting == 0) {
 			arrowY = gameAreaHeight;
 			arrowX = manX + man.getWidth() / 2 - arrow.getWidth()/ 2;
 		}
 		if (shoot == true) {
-			a = 1;
+			isShooting = 1;
 		}
-		if (a == 1) {
+		if (isShooting == 1) {
 			arrowY = arrowY - 8;
 
 			if (arrowY < 0) {
 				arrowY = gameAreaHeight;
-				a = 0;
+				isShooting = 0;
 			}
 		}
 	}
@@ -193,12 +194,10 @@ public class Levels extends Fragment{
 			if (balls.get(i).manHit == 1) {
 				balls.clear();
 				radius.clear();
-				a=0;
+				isShooting=0;
 				initializeNumberOfBalls(currentLevel);
 				delay=0;
 			}
-			
-			
 			
 		}
 	}
@@ -252,7 +251,7 @@ public class Levels extends Fragment{
 		if (balls.get(i).ballHit == 1) {
 			radius.set(i, radius.get(i) / 2);
 			arrowY = gameAreaHeight;
-			a = 0;
+			isShooting = 0;
 
 			if (radius.get(i) < BASE_RADIUS) {
 				balls.remove(i);
@@ -266,6 +265,8 @@ public class Levels extends Fragment{
 				radius.add(radius.get(i));
 				
 			}
+			
+			//generating bonous powerups
 		}	
 		}	
 	}
@@ -275,8 +276,6 @@ public class Levels extends Fragment{
 	
 	//Defining View class
 	class myView extends View {
-		
-		
 		
 		public myView(Context context) {
 			super(context);
@@ -323,9 +322,11 @@ public class Levels extends Fragment{
 			// ---------------------------------------------
 
 			
+			
 			if (delay > 100) {
-
-				updateGame();
+               
+				updateGame(); //condition can be applied here to pause the game
+				              //tested but not applied here 
 				renderGame(c);
 				detectCollison();
 				
@@ -352,6 +353,26 @@ public class Levels extends Fragment{
 			
 			
 		}
+	}
+
+  // method to save scores or running state of game
+  //i.e ballX,ballY,score,currentLevel,manX,manY,life,time,etc.
+	// also tested
+	
+	public void SaveInt(String key, int value){
+		sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+	       SharedPreferences.Editor editor = sharedPreferences.edit();
+	       editor.putInt(key, value);
+	       editor.commit();
+	}
+
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	//	SaveInt("currentLevel", currentLevel);
+		
 	}
 
 
