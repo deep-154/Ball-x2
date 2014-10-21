@@ -3,7 +3,6 @@ package com.mdg.bubbletrouble;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -14,23 +13,20 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
-public class Levels extends Fragment{
+public class Levels extends View{
 
+	
 	static float manX = 0,manY;
 	static float arrowY, arrowX;
-	float manVelocity,accelerometerSensorX;
+	float manVelocity,accelerometerSensorX = 0;
 	boolean shoot = false;
 	int isShooting = 0;
-	Bitmap []background = new Bitmap[6] ;
 	Bitmap man, man_left, man_right,arrow;
 	private ShapeDrawable ballDrawable;
-
+	Bitmap background;
 	private Rect sourceRect; // the rectangle to be drawn from the animation  bitmap								
 	private int frameNr = 4; // number of frames in animation
 	private int currentFrame; // the current frame
@@ -49,33 +45,48 @@ public class Levels extends Fragment{
 	float ballVelocityX = (float) 2.2;
 	double risingFactor = 0.1;
     int currentLevel = 1;
-    int delay = 0;
     float mid;
     SharedPreferences sharedPreferences;
     
-    @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		return new myView(getActivity());
+   
+    public Levels(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+		background = BitmapFactory.decodeResource(getResources(),R.drawable.layout2);
+		man = BitmapFactory.decodeResource(getResources(), R.drawable.man);
+		man_left = BitmapFactory.decodeResource(getResources(),
+				R.drawable.man_left);
+		man_right = BitmapFactory.decodeResource(getResources(),
+				R.drawable.man_right);
+		arrow = BitmapFactory.decodeResource(getResources(),
+				R.drawable.arrow);
+		sourceRect = new Rect(0, 0, man_right.getWidth() / 4,
+				man_right.getHeight());
+		framePeriod = 150;
+		frameTicker = 0l;
 
+		initializeGame();
 	}
-    
-    public void getCoordinate(float values, boolean checkShoot) {
+
+ 	@Override
+	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		accelerometerSensorX=values;
-		shoot = checkShoot;
 		
+		int action = event.getAction()& MotionEvent.ACTION_MASK;
+		if(action==MotionEvent.ACTION_DOWN){
+			shoot = true;
+		}
+		return true;
 	}
-    
+	
+
     public void initializeGame(){
     	initializeNumberOfBalls(currentLevel);
     	initializeGamePanelArena(currentLevel);
     	initializeListOfPowers(currentLevel);
     }
     
-    
-    	void initializeNumberOfBalls(int level) {
+		void initializeNumberOfBalls(int level) {
 
 		switch (level) {
 		case 1:
@@ -119,10 +130,9 @@ public class Levels extends Fragment{
 	}
         void initializeGamePanelArena(int level){
         	
-        	DisplayMetrics displaymetrics = new DisplayMetrics();
-        	getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        	gameAreaHeight = (float) ((0.73)*(displaymetrics.heightPixels));
-        	gameAreaWidth = displaymetrics.widthPixels; 
+        	gameAreaHeight =855*getHeight()/1000;
+        	gameAreaWidth = 90*getWidth()/100; 
+        	//Log.e("height", ""+gameAreaHeight);
         }
         void initializeListOfPowers(int level){
         }
@@ -142,11 +152,12 @@ public class Levels extends Fragment{
 		}
 		if (shoot == true) {
 			isShooting = 1;
+			shoot = false;
 		}
 		if (isShooting == 1) {
-			arrowY = arrowY - 8;
+			arrowY = arrowY - 5;
 
-			if (arrowY < 0) {
+			if (arrowY < 38*gameAreaHeight/100) {
 				arrowY = gameAreaHeight;
 				isShooting = 0;
 			}
@@ -171,16 +182,19 @@ public class Levels extends Fragment{
 		spriteWidth = man_right.getWidth() / 4;
 		manY = (int) (gameAreaHeight - man.getHeight());
 		mid = gameAreaWidth / 2 - man.getWidth() / 2;
+		
+	
+		accelerometerSensorX = MainActivity.sensorX;
 		manVelocity = 2*accelerometerSensorX;
 		if(Math.abs(manVelocity)<1){
 			manVelocity = 0;
+		}else {
+			manVelocity =(manVelocity/Math.abs(manVelocity))*4;
 		}
-		if(Math.abs(manVelocity)>3){
-			manVelocity =(manVelocity/Math.abs(manVelocity))*3;
-		}
-		manX = manX+manVelocity;
-		if(manX<0){
-			manX=0;
+	    manX = manX+manVelocity;
+		
+		if(manX<11*gameAreaWidth/100){
+			manX=11*gameAreaWidth/100;
 		}
         if(manX>gameAreaWidth-man.getWidth()){
 			manX=gameAreaWidth-man.getWidth();
@@ -196,8 +210,7 @@ public class Levels extends Fragment{
 				radius.clear();
 				isShooting=0;
 				initializeNumberOfBalls(currentLevel);
-				delay=0;
-			}
+							}
 			
 		}
 	}
@@ -218,7 +231,7 @@ public class Levels extends Fragment{
 	}
 	void renderMan(Canvas c){
 		Rect destRect = new Rect((int) manX,(int) manY,
-				(int) (manX + spriteWidth), (int)manY + spriteHeight);
+				(int) (manX + spriteWidth), (int) (manY +spriteHeight));
 		if(manVelocity>0){
 			c.drawBitmap(man_right,sourceRect, destRect, null);
 		}else
@@ -232,7 +245,7 @@ public class Levels extends Fragment{
 			
 		for (int i = 0; i < balls.size(); i++) {
 			
-			ballDrawable.getPaint().setColor(Color.GREEN);
+			ballDrawable.getPaint().setColor(Color.BLACK);
 			
 			ballDrawable.setBounds((int) balls.get(i).ballX,
 					(int) balls.get(i).ballY, 
@@ -273,57 +286,18 @@ public class Levels extends Fragment{
 	
 	
 	
-	
-	//Defining View class
-	class myView extends View {
-		
-		public myView(Context context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-			background[0] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv1);
-			background[1] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv2);
-			background[2] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv3);
-			background[3] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv4);
-			background[4] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv5);
-			background[5] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.lv6);
-			man = BitmapFactory.decodeResource(getResources(), R.drawable.man);
-			man_left = BitmapFactory.decodeResource(getResources(),
-					R.drawable.man_left);
-			man_right = BitmapFactory.decodeResource(getResources(),
-					R.drawable.man_right);
-			arrow = BitmapFactory.decodeResource(getResources(),
-					R.drawable.arrow);
-			sourceRect = new Rect(0, 0, man_right.getWidth() / 4,
-					man_right.getHeight());
-			framePeriod = 150;
-			frameTicker = 0l;
-
-			initializeGame();
-		}
-
-		
-		
-		@SuppressLint("DrawAllocation") @Override
-		protected void onDraw(Canvas c) {
+	 @SuppressLint("DrawAllocation") public void onDraw(Canvas c) {
 			// TODO Auto-generated method stub
 			super.onDraw(c);
 
 			Rect dest = new Rect(0, 0, getWidth(), getHeight());
 			Paint paint = new Paint();
-			paint.setFilterBitmap(true);
+			paint.setFilterBitmap(true);			
+			c.drawBitmap(background, null, dest, paint);
 			
-			c.drawBitmap(background[currentLevel-1], null, dest, paint);
-			// ---------------------------------------------
-
+			initializeGamePanelArena(currentLevel);
 			
 			
-			if (delay > 100) {
                
 				updateGame(); //condition can be applied here to pause the game
 				              //tested but not applied here 
@@ -333,33 +307,30 @@ public class Levels extends Fragment{
 				if(balls.isEmpty()){
 					currentLevel++;
 					initializeNumberOfBalls(currentLevel);
-					delay=0;
-				
+					
 				}
+				
+			
 
-			}
-
-			if (delay < 102) {
-				manX = mid;
-				Paint write = new Paint();
-				write.setColor(Color.rgb(253, 238, 0));
-				write.setTextSize(50);
-				write.setStrokeWidth(30);
-				c.drawText("Get Ready", 4 * gameAreaWidth / 10, 6 * gameAreaHeight / 10, write);
-				delay++;
-			}
-
+			
+			Paint write1 = new Paint();
+			write1.setColor(Color.BLUE);
+			c.drawCircle(11*gameAreaWidth/100, 50*gameAreaHeight/100, 5, write1);
 			invalidate();
 			
 			
 		}
-	}
+
+
+
+
+	
 
   // method to save scores or running state of game
   //i.e ballX,ballY,score,currentLevel,manX,manY,life,time,etc.
 	// also tested
 	
-	public void SaveInt(String key, int value){
+/*	public void SaveInt(String key, int value){
 		sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 	       SharedPreferences.Editor editor = sharedPreferences.edit();
 	       editor.putInt(key, value);
@@ -373,20 +344,9 @@ public class Levels extends Fragment{
 		super.onDestroy();
 	//	SaveInt("currentLevel", currentLevel);
 		
-	}
+	}*/
 
 
 
-
-
-	
-
-	
-
-
-
-	
-
-	
 
 }

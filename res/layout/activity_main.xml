@@ -10,14 +10,9 @@
         android:id="@+id/main"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="27" >
+        android:background="@drawable/layout2" >
     </FrameLayout>
 
-    <fragment
-        android:id="@+id/control"
-        android:name="com.mdg.bubbletrouble.controller"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="73" />
+    
 
 </LinearLayout>

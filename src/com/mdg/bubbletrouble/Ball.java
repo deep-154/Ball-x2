@@ -26,7 +26,6 @@ public class Ball {
 	}
 
 	void moveBall(float radius) {
-		//float side_strip = (float) (0.0134 * W);
 		 
 			H = Levels.gameAreaHeight;
 			W = Levels.gameAreaWidth;

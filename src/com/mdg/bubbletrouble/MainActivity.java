@@ -2,57 +2,61 @@ package com.mdg.bubbletrouble;
 
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 
-public class MainActivity extends Activity implements controller.OnTouch {
+public class MainActivity extends Activity implements SensorEventListener{
 
-	AccelerometerControl acc = new AccelerometerControl();
+	SensorManager sensorManager;
+	public Sensor sensor;
+	static float sensorX;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(new Levels(this));
 
-		Fragment fr = new Levels();
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction fragmentTransaction = fm.beginTransaction();
-		fragmentTransaction.replace(R.id.main, fr, "one");
-		fragmentTransaction.commit();
-		
-		acc.sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-	    acc.sensor = acc.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-	    acc.registerSensor();
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+	    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+	    sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
 	}
-
 
 	
-
 	@Override
-	public void onCoordinateSelected(boolean checkShoot) {
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
-
-			Levels one = (Levels) getFragmentManager().findFragmentByTag("one");
-			one.getCoordinate(acc.getValues(), checkShoot);	
-			//Log.v("accelerate",""+acc.getValues());
-			
+		
 	}
 
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// TODO Auto-generated method stub
+		sensorX = event.values[1];	
+	}
+	
+	
+	
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		acc.unregisterSensor();
+		sensorManager.unregisterListener(this, sensor);
 		
 	}
 
 	
+	
+
+
+
+
+
+
 	
 	
 	
