@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,7 +25,7 @@ public class Levels extends View{
 	float manVelocity,accelerometerSensorX = 0;
 	boolean shoot = false;
 	int isShooting = 0;
-	Bitmap man, man_left, man_right,arrow;
+	Bitmap man, man_left, man_right,arrow,pause;
 	private ShapeDrawable ballDrawable;
 	Bitmap background;
 	private Rect sourceRect; // the rectangle to be drawn from the animation  bitmap								
@@ -36,6 +37,11 @@ public class Levels extends View{
 								// rectangle
 	private int spriteHeight;
 	static float gameAreaHeight, gameAreaWidth;
+	int currentLevel = 1;
+	int touchX,touchY;
+	boolean pauseGame = false;
+	
+	//Initializing list to store balls and their radius
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	ArrayList<Integer> radius = new ArrayList<Integer>();
 	final int BASE_RADIUS = 15;
@@ -44,8 +50,8 @@ public class Levels extends View{
 	int ballY = 150;
 	float ballVelocityX = (float) 2.2;
 	double risingFactor = 0.1;
-    int currentLevel = 1;
-    float mid;
+	
+    
     SharedPreferences sharedPreferences;
     
    
@@ -60,6 +66,8 @@ public class Levels extends View{
 				R.drawable.man_right);
 		arrow = BitmapFactory.decodeResource(getResources(),
 				R.drawable.arrow);
+		pause = BitmapFactory.decodeResource(getResources(),
+				R.drawable.pause);
 		sourceRect = new Rect(0, 0, man_right.getWidth() / 4,
 				man_right.getHeight());
 		framePeriod = 150;
@@ -68,13 +76,15 @@ public class Levels extends View{
 		initializeGame();
 	}
 
- 	@Override
+ 	@SuppressLint("ClickableViewAccessibility") @Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		
 		int action = event.getAction()& MotionEvent.ACTION_MASK;
 		if(action==MotionEvent.ACTION_DOWN){
 			shoot = true;
+			touchX = (int) event.getX();
+			touchY = (int) event.getY();
 		}
 		return true;
 	}
@@ -132,7 +142,7 @@ public class Levels extends View{
         	
         	gameAreaHeight =855*getHeight()/1000;
         	gameAreaWidth = 90*getWidth()/100; 
-        	//Log.e("height", ""+gameAreaHeight);
+        //	Log.i("suyfbys", ""+man.getHeight());
         }
         void initializeListOfPowers(int level){
         }
@@ -180,24 +190,22 @@ public class Levels extends View{
 
 		spriteHeight = man.getHeight();
 		spriteWidth = man_right.getWidth() / 4;
-		manY = (int) (gameAreaHeight - man.getHeight());
-		mid = gameAreaWidth / 2 - man.getWidth() / 2;
+		manY = (int) (9*gameAreaHeight/10);
 		
-	
 		accelerometerSensorX = MainActivity.sensorX;
 		manVelocity = 2*accelerometerSensorX;
 		if(Math.abs(manVelocity)<1){
 			manVelocity = 0;
 		}else {
-			manVelocity =(manVelocity/Math.abs(manVelocity))*4;
+			manVelocity =(manVelocity/Math.abs(manVelocity))*(35/10);
 		}
 	    manX = manX+manVelocity;
 		
 		if(manX<11*gameAreaWidth/100){
 			manX=11*gameAreaWidth/100;
 		}
-        if(manX>gameAreaWidth-man.getWidth()){
-			manX=gameAreaWidth-man.getWidth();
+        if(manX>gameAreaWidth-gameAreaWidth/20){
+			manX=gameAreaWidth-gameAreaWidth/20;
 		}
 	}
 	void updateBallPosition(){
@@ -221,6 +229,7 @@ public class Levels extends View{
 		renderArrow(c);
 		renderMan(c);
 		renderBalls(c);
+		renderOtherObjects(c);
 	}
 	
 	void renderArrow(Canvas c){
@@ -231,7 +240,7 @@ public class Levels extends View{
 	}
 	void renderMan(Canvas c){
 		Rect destRect = new Rect((int) manX,(int) manY,
-				(int) (manX + spriteWidth), (int) (manY +spriteHeight));
+				(int) (manX + gameAreaWidth/20), (int) (manY +gameAreaHeight/10));
 		if(manVelocity>0){
 			c.drawBitmap(man_right,sourceRect, destRect, null);
 		}else
@@ -252,6 +261,25 @@ public class Levels extends View{
 					(int) balls.get(i).ballX+ radius.get(i),
 					(int) balls.get(i).ballY+ radius.get(i));
 			ballDrawable.draw(c);
+		}
+	}
+	void renderOtherObjects(Canvas c){
+		
+		Bitmap checkPauseBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pause);			
+		Rect r = new Rect((int)(97*gameAreaWidth/100),(int)(11*gameAreaHeight/100),
+				(int)(100*gameAreaWidth/100),(int)(18*gameAreaHeight/100));
+		c.drawBitmap(pause, null, r, null);
+		if(r.contains(touchX, touchY)){
+		 //BITMAP TOUCHED
+			shoot = false;
+			touchX = touchY =0;
+			if(pause.sameAs(checkPauseBitmap)){
+				pauseGame = true;
+				pause = BitmapFactory.decodeResource(getResources(),R.drawable.play);				
+			}else{
+				pauseGame = false;
+				pause = BitmapFactory.decodeResource(getResources(),R.drawable.pause);
+			}
 		}
 	}
 	
@@ -294,13 +322,12 @@ public class Levels extends View{
 			Paint paint = new Paint();
 			paint.setFilterBitmap(true);			
 			c.drawBitmap(background, null, dest, paint);
-			
 			initializeGamePanelArena(currentLevel);
-			
-			
-               
-				updateGame(); //condition can be applied here to pause the game
-				              //tested but not applied here 
+		//----------------------------------------------------------------------------------	
+			 //condition to pause the game is applied here
+               if(pauseGame == false){
+				updateGame();
+               }             
 				renderGame(c);
 				detectCollison();
 				
@@ -310,12 +337,19 @@ public class Levels extends View{
 					
 				}
 				
-			
+				/* 	Typeface tf =Typeface.createFromAsset(getContext().getAssets(), "fonts/chewy.ttf");
+		      Paint p = new Paint();
+		     p.setTypeface(tf);
+		     p.setTextSize(50);
+		     c.drawText("Sample text in bold RECOGNITION",11*gameAreaWidth/100, 50*gameAreaHeight/100,p);*/
 
 			
 			Paint write1 = new Paint();
-			write1.setColor(Color.BLUE);
-			c.drawCircle(11*gameAreaWidth/100, 50*gameAreaHeight/100, 5, write1);
+			write1.setColor(Color.WHITE);
+			write1.setAlpha(80);
+		//	c.drawCircle(11*gameAreaWidth/100, 50*gameAreaHeight/100, 5, write1);
+			
+		
 			invalidate();
 			
 			
