@@ -40,7 +40,8 @@ public class Levels extends View{
 	int currentLevel = 1;
 	int touchX,touchY;
 	boolean pauseGame = false;
-	
+	int maxTime = 0;
+	int time = 0;
 	//Initializing list to store balls and their radius
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	ArrayList<Integer> radius = new ArrayList<Integer>();
@@ -93,7 +94,7 @@ public class Levels extends View{
     public void initializeGame(){
     	initializeNumberOfBalls(currentLevel);
     	initializeGamePanelArena(currentLevel);
-    	initializeListOfPowers(currentLevel);
+    	initializeTime(currentLevel);
     }
     
 		void initializeNumberOfBalls(int level) {
@@ -142,11 +143,24 @@ public class Levels extends View{
         	
         	gameAreaHeight =855*getHeight()/1000;
         	gameAreaWidth = 90*getWidth()/100; 
-        //	Log.i("suyfbys", ""+man.getHeight());
-        }
-        void initializeListOfPowers(int level){
-        }
-       
+        }     
+        void initializeTime(int level) {
+    		switch (level) {
+    		case 1:
+    			maxTime = 10000;
+    			break;
+    		case 2:
+    			maxTime = 10000;
+    			break;
+    		case 3:
+    			maxTime = 20000;
+    			break;
+    		case 4:
+    			maxTime = 22000;
+    			break;
+    		}
+    		time = maxTime;
+    	}
         
         
     public void updateGame(){
@@ -154,6 +168,7 @@ public class Levels extends View{
     	updateArrowPosition();
     	updateManState();
     	updateBallPosition();
+    	updateTimeCounter();
     }
 	void updateArrowPosition(){
 		if (isShooting == 0) {
@@ -222,7 +237,9 @@ public class Levels extends View{
 			
 		}
 	}
-	
+	void updateTimeCounter() {
+		time = time - 4;
+	}
 	
 	
 	public void renderGame(Canvas c){
@@ -264,7 +281,7 @@ public class Levels extends View{
 		}
 	}
 	void renderOtherObjects(Canvas c){
-		
+		//Drawing play/pause Button
 		Bitmap checkPauseBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pause);			
 		Rect r = new Rect((int)(97*gameAreaWidth/100),(int)(11*gameAreaHeight/100),
 				(int)(100*gameAreaWidth/100),(int)(18*gameAreaHeight/100));
@@ -281,7 +298,52 @@ public class Levels extends View{
 				pause = BitmapFactory.decodeResource(getResources(),R.drawable.pause);
 			}
 		}
+		renderingTimer(c);//just displaying timer
 	}
+	void renderingTimer(Canvas c){
+    	if (time < 0) {
+			message = "Time Up";
+			otherRunTimeFunctionCalls();
+		}
+		Paint p1 = new Paint();
+		p1.setColor(Color.BLACK);
+		p1.setStyle(Style.STROKE);
+		p1.setStrokeWidth(gameAreaHeight / 61);
+
+		Paint p2 = new Paint();
+		p2.setColor(Color.rgb(249, 224, 134));
+		p2.setStyle(Style.STROKE);
+		p2.setStrokeWidth(gameAreaHeight / 56);
+		int Radius = 9 * getHeight() / 100;
+		int degrees = -360 * time / maxTime;
+		c.drawCircle((int) (88.5 * getWidth() / 100),
+				(int) (12 * getHeight() / 100), (int) Radius, p1);
+
+		RectF rectF = new RectF((int) (88.5 * getWidth() / 100 - Radius), 12
+				* getHeight() / 100 - Radius,
+				(int) (88.5 * getWidth() / 100 + Radius), 12 * getHeight()
+						/ 100 + Radius);
+		c.drawArc(rectF, 270, degrees, false, p2);
+
+		int glowWidth = (int) (gameAreaHeight / 80);
+		Paint p3 = new Paint();
+		p3.setStyle(Style.STROKE);
+		p3.setStrokeWidth(glowWidth);
+
+		p3.setARGB(100, 249, 224, 134);
+		int innerRadius = Radius - glowWidth;
+		RectF rectF2 = new RectF((int) (88.5 * getWidth() / 100 - innerRadius),
+				12 * getHeight() / 100 - innerRadius,
+				(int) (88.5 * getWidth() / 100 + innerRadius), 12 * getHeight()
+						/ 100 + innerRadius);
+		c.drawArc(rectF2, 270, degrees, false, p3);
+		int outerRadius = Radius + glowWidth;
+		RectF rectF3 = new RectF((int) (88.5 * getWidth() / 100 - outerRadius),
+				12 * getHeight() / 100 - outerRadius,
+				(int) (88.5 * getWidth() / 100 + outerRadius), 12 * getHeight()
+						/ 100 + outerRadius);
+		c.drawArc(rectF3, 270, degrees, false, p3);
+    }
 	
 	public void detectCollison(){
 		collisonBallArrow();
