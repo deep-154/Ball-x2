@@ -498,7 +498,39 @@ public class Levels extends View{
 			initializeTime(currentLevel);
 		} else {
 			//gameOver Dialog will be displayed
+			gameOver();
 		}
+	}
+	
+	public void gameOver() {
+		pauseGame = true;
+		final Dialog popUp = new Dialog(act);
+		popUp.setTitle("PLAY AGAIN");
+		popUp.setContentView(R.layout.game_over);
+		Button yes = (Button) popUp.findViewById(R.id.button1);
+		Button no = (Button) popUp.findViewById(R.id.button2);
+		TextView dis = (TextView) popUp.findViewById(R.id.textView2);
+		dis.setText("" + score);
+		yes.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(getContext(), MainActivity.class);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				getContext().startActivity(i);
+				popUp.dismiss();
+			}
+		});
+		no.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				System.exit(0);
+			}
+		});
+		popUp.show();
+
 	}
 	
 	 @SuppressLint("DrawAllocation") public void onDraw(Canvas c) {
