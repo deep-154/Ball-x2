@@ -42,6 +42,9 @@ public class Levels extends View{
 	boolean pauseGame = false;
 	int maxTime = 0;
 	int time = 0;
+	int numberOfLife = 5;
+	String message = null;
+	int score = 0;
 	//Initializing list to store balls and their radius
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	ArrayList<Integer> radius = new ArrayList<Integer>();
@@ -73,10 +76,16 @@ public class Levels extends View{
 				man_right.getHeight());
 		framePeriod = 150;
 		frameTicker = 0l;
-
-		initializeGame();
 	}
 
+    @Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		// TODO Auto-generated method stub
+		super.onSizeChanged(w, h, oldw, oldh);
+		if (oldw == 0)
+			initializeGame();
+	}
+    
  	@SuppressLint("ClickableViewAccessibility") @Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
@@ -299,11 +308,12 @@ public class Levels extends View{
 			}
 		}
 		renderingTimer(c);//just displaying timer
+		displayingLivesAndScores(c);//writing no. of lives and scores
 	}
 	void renderingTimer(Canvas c){
     	if (time < 0) {
 			message = "Time Up";
-			otherRunTimeFunctionCalls();
+			settingDelay();
 		}
 		Paint p1 = new Paint();
 		p1.setColor(Color.BLACK);
@@ -345,8 +355,37 @@ public class Levels extends View{
 		c.drawArc(rectF3, 270, degrees, false, p3);
     }
 	
+	void displayingLivesAndScores(Canvas c){
+    	//displaying levelNumber
+    	Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
+				"fonts/chewy.ttf");
+		Paint p = new Paint();
+		p.setTypeface(tf);
+		p.setTextSize(5 * gameAreaHeight / 56);
+		c.drawText("Level # " + currentLevel, 48 * gameAreaWidth / 100,
+				95 * getHeight() / 100, p);
+		//displaying no. of Lives
+    	Rect y = new Rect((int) (45 * gameAreaWidth / 100),
+				(int) (12 * gameAreaHeight / 100),
+				(int) (45 * gameAreaWidth / 100 + gameAreaHeight / 10),
+				(int) (10 * gameAreaHeight / 100 + gameAreaHeight / 9));
+		c.drawBitmap(life, null, y, null);
+		Paint text = new Paint();
+		text.setColor(Color.BLACK);
+		text.setTextSize((float) (1.1 * gameAreaHeight / 9));
+		text.setTypeface(tf);
+		c.drawText("" + numberOfLife, 53 * gameAreaWidth / 100,
+				21 * gameAreaHeight / 100, text);
+
+		// ------------------------------------------------------------------------------
+		// display scores
+		c.drawText("" + score, 6 * gameAreaWidth / 100,
+				21 * gameAreaHeight / 100, text);
+    }
+	
 	public void detectCollison(){
 		collisonBallArrow();
+		collisonBallMan();
 	}
 	
 	void collisonBallArrow(){
@@ -373,8 +412,42 @@ public class Levels extends View{
 		}	
 		}	
 	}
+	void collisonBallMan() {
+		for (int i = 0; i < balls.size(); i++) {
+			if (balls.get(i).manballCollison) {
+				// life will be lost
+				message = "You Got Hit";
+				settingDelay();
+			}
+
+		}
+	}
 	
-	
+	private void settingDelay() {
+		// TODO Auto-generated method stub
+		counter++;
+		if (counter < 60) {
+			pauseGame = true;
+		} else {
+			pauseGame = false;
+			lifeLost();
+			counter = 0;
+		}
+	}
+
+	public void lifeLost() {
+		numberOfLife--;
+		balls.clear();
+		radius.clear();
+		gifts.clear();
+		isShooting = 0;
+		if (numberOfLife > 0) {
+			initializeNumberOfBalls(currentLevel);
+			initializeTime(currentLevel);
+		} else {
+			//gameOver Dialog will be displayed
+		}
+	}
 	
 	 @SuppressLint("DrawAllocation") public void onDraw(Canvas c) {
 			// TODO Auto-generated method stub
@@ -393,25 +466,24 @@ public class Levels extends View{
 				renderGame(c);
 				detectCollison();
 				
-				if(balls.isEmpty()){
-					currentLevel++;
-					initializeNumberOfBalls(currentLevel);
-					
+				if (numberOfLife > 0 && currentLevel < 5) {
+					if (balls.isEmpty()) {
+						currentLevel++;
+						initializeNumberOfBalls(currentLevel);
+						initializeTime(currentLevel);
+					}
 				}
-				
-				/* 	Typeface tf =Typeface.createFromAsset(getContext().getAssets(), "fonts/chewy.ttf");
-		      Paint p = new Paint();
-		     p.setTypeface(tf);
-		     p.setTextSize(50);
-		     c.drawText("Sample text in bold RECOGNITION",11*gameAreaWidth/100, 50*gameAreaHeight/100,p);*/
-
+				if (counter > 1 && counter < 60) {
+					Paint text = new Paint();
+					text.setColor(Color.BLACK);
+					text.setTextSize((float) (1.1 * gameAreaHeight / 9));
+					Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
+							"fonts/chewy.ttf");
+					text.setTypeface(tf);
+					c.drawText(message, 40 * gameAreaWidth / 100,
+							60 * gameAreaHeight / 100, text);
+				}
 			
-			Paint write1 = new Paint();
-			write1.setColor(Color.WHITE);
-			write1.setAlpha(80);
-		//	c.drawCircle(11*gameAreaWidth/100, 50*gameAreaHeight/100, 5, write1);
-			
-		
 			invalidate();
 			
 			
