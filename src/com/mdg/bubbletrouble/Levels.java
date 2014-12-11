@@ -20,60 +20,61 @@ import android.view.View;
 public class Levels extends View{
 
 	
-	static float manX = 0,manY;
-	static float arrowY, arrowX;
-	float manVelocity,accelerometerSensorX = 0;
-	boolean shoot = false;
+	static float manX = -100, manY = -100;
+	static float arrowY = -1000, arrowX = -100;
+	float manVelocity, accelerometerSensorX = -1;
+	boolean shoot = false, manMove = true, otherShoot = false;
 	int isShooting = 0;
-	Bitmap man, man_left, man_right,arrow,pause;
+	Bitmap man, man_left, man_right, arrow, pause, life;
 	private ShapeDrawable ballDrawable;
-	Bitmap background;
-	private Rect sourceRect; // the rectangle to be drawn from the animation  bitmap								
+	Bitmap background, directionArrowLeft, directionArrowRight;
+	private Rect sourceRect; // the rectangle to be drawn from the animation
+								// bitmap
 	private int frameNr = 4; // number of frames in animation
 	private int currentFrame; // the current frame
 	private long frameTicker; // the time of the last frame update
 	private int framePeriod; // milliseconds between each frame (1000/fps)
 	private int spriteWidth; // the width of the sprite to calculate the cut out
 								// rectangle
-	private int spriteHeight;
 	static float gameAreaHeight, gameAreaWidth;
 	int currentLevel = 1;
-	int touchX,touchY;
+	int[] touchX = new int[2];
+	int[] touchY = new int[2];
 	boolean pauseGame = false;
 	int maxTime = 0;
 	int time = 0;
 	int numberOfLife = 5;
 	String message = null;
 	int score = 0;
-	//Initializing list to store balls and their radius
+	// Initializing list to store balls and their radius
 	ArrayList<Ball> balls = new ArrayList<Ball>();
 	ArrayList<Integer> radius = new ArrayList<Integer>();
-	final int BASE_RADIUS = 15;
-	int NumberOfBalls;
-	int ballX = 100;
-	int ballY = 150;
-	float ballVelocityX = (float) 2.2;
+	static int BASE_RADIUS;
+	float ballVelocityX = (float) 2;
 	double risingFactor = 0.1;
-	
-    
-    SharedPreferences sharedPreferences;
+	int counter = 0;
+	Activity act;
     
    
     public Levels(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
-		background = BitmapFactory.decodeResource(getResources(),R.drawable.layout2);
+		act = activity;
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.layout4);
 		man = BitmapFactory.decodeResource(getResources(), R.drawable.man);
 		man_left = BitmapFactory.decodeResource(getResources(),
 				R.drawable.man_left);
 		man_right = BitmapFactory.decodeResource(getResources(),
 				R.drawable.man_right);
-		arrow = BitmapFactory.decodeResource(getResources(),
-				R.drawable.arrow);
-		pause = BitmapFactory.decodeResource(getResources(),
-				R.drawable.pause);
-		sourceRect = new Rect(0, 0, man_right.getWidth() / 4,
-				man_right.getHeight());
+		arrow = BitmapFactory.decodeResource(getResources(), R.drawable.arrow);
+		pause = BitmapFactory.decodeResource(getResources(), R.drawable.pause);
+		life = BitmapFactory.decodeResource(getResources(), R.drawable.life);
+		directionArrowLeft = BitmapFactory.decodeResource(getResources(),
+				R.drawable.arrow_left);
+		directionArrowRight = BitmapFactory.decodeResource(getResources(),
+				R.drawable.arrow_right);
+		sourceRect = new Rect(0, 0, man_right.getWidth()/4, man.getHeight());
 		framePeriod = 150;
 		frameTicker = 0l;
 	}
@@ -90,13 +91,25 @@ public class Levels extends View{
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		
-		int action = event.getAction()& MotionEvent.ACTION_MASK;
-		if(action==MotionEvent.ACTION_DOWN){
+ 		touchX[0] = (int) event.getX(0);
+		touchY[0] = (int) event.getY(0);
+
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
 			shoot = true;
-			touchX = (int) event.getX();
-			touchY = (int) event.getY();
+			manMove = true;
+			touchX[1] = (int) event.getX(0);
+			touchY[1] = (int) event.getY(0);
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			otherShoot = true;
+			break;
+		case MotionEvent.ACTION_UP:
+			manMove = false;
+			break;
+
 		}
-		return true;
 	}
 	
 
@@ -107,41 +120,46 @@ public class Levels extends View{
     }
     
 		void initializeNumberOfBalls(int level) {
-
+			
+		manX = 11 * gameAreaWidth / 100;
+		int initialBallX = (int) (11 * gameAreaWidth / 100);
+		int initialBallY = (int) (50 * gameAreaHeight / 100);
+		
 		switch (level) {
 		case 1:
-			NumberOfBalls = 1;
-			Ball b1 = new Ball(100,150,risingFactor);
+			Ball b1 = new Ball(initialBallX + 100,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
 			balls.add(b1);
 			radius.add(2 * BASE_RADIUS);
 			break;
-		
+
 		case 2:
-			NumberOfBalls = 2;
-			Ball b2 = new Ball(100,150,risingFactor);
-			Ball b3 = new Ball(600,150,risingFactor);
+			Ball b2 = new Ball(initialBallX + 100,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+			Ball b3 = new Ball(initialBallX + 400,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
 			balls.add(b2);
 			balls.add(b3);
 			radius.add(4 * BASE_RADIUS);
 			radius.add(2 * BASE_RADIUS);
 			break;
-		
+
 		case 3:
-			NumberOfBalls = 1;
-			Ball b4 = new Ball(100,200,risingFactor);
+			Ball b4 = new Ball(initialBallX + 100, initialBallY, risingFactor);
 			balls.add(b4);
 			radius.add(8 * BASE_RADIUS);
 			break;
 		case 4:
-			NumberOfBalls = 3;
-			Ball b5 = new Ball(100,150,risingFactor);
-			Ball b6 = new Ball(600,100,risingFactor);
-			Ball b7 = new Ball(1000,200,risingFactor);
+			Ball b5 = new Ball(initialBallX + 100,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+			Ball b6 = new Ball(initialBallX + 400,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+			Ball b7 = new Ball(initialBallX + 700, initialBallY, risingFactor);
 			balls.add(b5);
 			balls.add(b6);
 			balls.add(b7);
-			radius.add(4 * BASE_RADIUS);
 			radius.add(2 * BASE_RADIUS);
+			radius.add(4 * BASE_RADIUS);
 			radius.add(8 * BASE_RADIUS);
 			break;
 		}
@@ -152,6 +170,7 @@ public class Levels extends View{
         	
         	gameAreaHeight =855*getHeight()/1000;
         	gameAreaWidth = 90*getWidth()/100; 
+        	BASE_RADIUS = (int) (gameAreaHeight / 48);
         }     
         void initializeTime(int level) {
     		switch (level) {
@@ -209,27 +228,47 @@ public class Levels extends View{
 			}
 		}
 		// defining the rectangle to cut out sprite
+		spriteWidth = man_right.getWidth() / 4;
 		sourceRect.left = currentFrame * spriteWidth;
 		sourceRect.right = sourceRect.left + spriteWidth;
 
-		spriteHeight = man.getHeight();
-		spriteWidth = man_right.getWidth() / 4;
-		manY = (int) (9*gameAreaHeight/10);
-		
-		accelerometerSensorX = MainActivity.sensorX;
-		manVelocity = 2*accelerometerSensorX;
-		if(Math.abs(manVelocity)<1){
-			manVelocity = 0;
-		}else {
-			manVelocity =(manVelocity/Math.abs(manVelocity))*(35/10);
+		manY = (int) (9 * gameAreaHeight / 10);
+		//Accelerometer method
+		if (MainActivity.selectMethod == 1) {
+			accelerometerSensorX = AccelerometerData.sensorX;
+			manVelocity = 2 * accelerometerSensorX;
+
+			if (Math.abs(manVelocity) < 1) {
+				manVelocity = 0;
+			} else {
+				manVelocity = (manVelocity / Math.abs(manVelocity)) * (35 / 10);
+			}
+		} else if (MainActivity.selectMethod == 2) { //Manual Method
+
+			Rect destArrowLeft = new Rect(5 * getWidth() / 100,
+					88 * getHeight() / 100, 13 * getWidth() / 100,
+					97 * getHeight() / 100);
+			Rect destArrowRight = new Rect(15 * getWidth() / 100,
+					88 * getHeight() / 100, 23 * getWidth() / 100,
+					97 * getHeight() / 100);
+			if (manMove == true) {
+				if (destArrowLeft.contains(touchX[0], touchY[0])) {
+					manVelocity = (float) -3.5;
+					shoot = false;
+				} else if (destArrowRight.contains(touchX[0], touchY[0])) {
+					manVelocity = (float) 3.5;
+					shoot = false;
+				}
+			} else
+				manVelocity = 0;
 		}
-	    manX = manX+manVelocity;
-		
-		if(manX<11*gameAreaWidth/100){
-			manX=11*gameAreaWidth/100;
+		//updating manVelocity
+		manX = manX + manVelocity;
+		if (manX < 11 * gameAreaWidth / 100) {
+			manX = 11 * gameAreaWidth / 100;
 		}
-        if(manX>gameAreaWidth-gameAreaWidth/20){
-			manX=gameAreaWidth-gameAreaWidth/20;
+		if (manX > gameAreaWidth - gameAreaWidth / 20) {
+			manX = gameAreaWidth - gameAreaWidth / 20;
 		}
 	}
 	void updateBallPosition(){
@@ -309,6 +348,7 @@ public class Levels extends View{
 		}
 		renderingTimer(c);//just displaying timer
 		displayingLivesAndScores(c);//writing no. of lives and scores
+		renderingNavigationArrows(c);
 	}
 	void renderingTimer(Canvas c){
     	if (time < 0) {
@@ -382,6 +422,18 @@ public class Levels extends View{
 		c.drawText("" + score, 6 * gameAreaWidth / 100,
 				21 * gameAreaHeight / 100, text);
     }
+	 void renderingNavigationArrows(Canvas c){
+	    	if (MainActivity.selectMethod == 2) { // whem Manual method is selected
+				Rect destArrowLeft = new Rect(5 * getWidth() / 100,
+						88 * getHeight() / 100, 13 * getWidth() / 100,
+						97 * getHeight() / 100);
+				c.drawBitmap(directionArrowLeft, null, destArrowLeft, null);
+				Rect destArrowRight = new Rect(15 * getWidth() / 100,
+						88 * getHeight() / 100, 23 * getWidth() / 100,
+						97 * getHeight() / 100);
+				c.drawBitmap(directionArrowRight, null, destArrowRight, null);
+			}
+	    }
 	
 	public void detectCollison(){
 		collisonBallArrow();
