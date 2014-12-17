@@ -197,6 +197,7 @@ public class Levels extends View{
     	updateManState();
     	updateBallPosition();
     	updateTimeCounter();
+    	updateGiftPosition();
     }
 	void updateArrowPosition(){
 		if (isShooting == 0) {
@@ -289,12 +290,18 @@ public class Levels extends View{
 		time = time - 4;
 	}
 	
+	void updateGiftPosition() {
+		for (int i = 0; i < gifts.size(); i++) {
+			gifts.get(i).dropGift();
+		}
+	}
 	
 	public void renderGame(Canvas c){
 		renderArrow(c);
 		renderMan(c);
 		renderBalls(c);
 		renderOtherObjects(c);
+		renderGifts(c);
 	}
 	
 	void renderArrow(Canvas c){
@@ -434,10 +441,72 @@ public class Levels extends View{
 				c.drawBitmap(directionArrowRight, null, destArrowRight, null);
 			}
 	    }
-	
+	 void renderGifts(Canvas c) {
+			Bitmap gift = null;
+			float giftWidth = gameAreaWidth / 55;
+			for (int i = 0; i < gifts.size(); i++) {
+				switch (gifts.get(i).id) {
+				case 2:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_life);
+					break;
+				case 3:
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_time);
+					break;
+				case 4:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_armor);
+					break;
+				case 5:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_laser);
+					break;
+				case 6:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_tornado);
+					break;
+				case 7:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_spike);
+					break;
+				case 8:
+					giftWidth = gameAreaWidth / 65;
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_arrow);
+					break;
+				case 9:
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_coin);
+					break;
+				case 10:
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_coins);
+					break;
+				case 11:
+					gift = BitmapFactory.decodeResource(getResources(),
+							R.drawable.gift_dollar);
+					break;
+				}
+				if (gift != null) {
+					Rect r = new Rect((int) (gifts.get(i).giftX - giftWidth),
+							(int) (gifts.get(i).giftY),
+							(int) (gifts.get(i).giftX + giftWidth),
+							(int) (gifts.get(i).giftY + gameAreaHeight / 15));
+					c.drawBitmap(gift, null, r, null);
+				}
+			}
+		}
+	 
 	public void detectCollison(){
 		collisonBallArrow();
 		collisonBallMan();
+		collisonManGift();
 	}
 	
 	void collisonBallArrow(){
@@ -459,8 +528,7 @@ public class Levels extends View{
 				radius.add(radius.get(i));
 				
 			}
-			
-			//generating bonous powerups
+			generatePowerUps(balls.get(i).ballY);//generating bonous powerUps			
 		}	
 		}	
 	}
@@ -472,6 +540,14 @@ public class Levels extends View{
 				settingDelay();
 			}
 
+		}
+	}
+	void collisonManGift() {
+		for (int i = 0; i < gifts.size(); i++) {
+			if (gifts.get(i).giftTaken) {
+				updatePowerUps(gifts.get(i).id);
+				gifts.remove(i);
+			}
 		}
 	}
 	
@@ -530,6 +606,50 @@ public class Levels extends View{
 			}
 		});
 		popUp.show();
+
+	}
+	
+	public void generatePowerUps(float giftY) {
+		int powerUpId[] = { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4,
+				4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 9,
+				9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 11, 11 };
+
+		Random r = new Random();
+		int generatedPowerUpId = powerUpId[r.nextInt(50)];
+		switch (currentLevel) {
+		case 1:
+			if (generatedPowerUpId == 5 || generatedPowerUpId == 6)
+				generatedPowerUpId = 8;
+			if (generatedPowerUpId == 10 || generatedPowerUpId == 11)
+				generatedPowerUpId = 9;
+			break;
+		case 2:
+			if (generatedPowerUpId == 5)
+				generatedPowerUpId = 8;
+			if (generatedPowerUpId == 6)
+				generatedPowerUpId = 7;
+			if (generatedPowerUpId == 11)
+				generatedPowerUpId = 10;
+			break;
+		case 3:
+			if (generatedPowerUpId == 5)
+				generatedPowerUpId = 8;
+			if (generatedPowerUpId == 6)
+				generatedPowerUpId = 7;
+			if (generatedPowerUpId == 11)
+				generatedPowerUpId = 10;
+			break;
+		case 4:
+			if (generatedPowerUpId == 5)
+				generatedPowerUpId = 8;
+			if (generatedPowerUpId == 6)
+				generatedPowerUpId = 7;
+			break;
+		}
+		if (generatedPowerUpId != 1) {
+			PowerUp p = new PowerUp(arrowX, giftY, generatedPowerUpId);
+			gifts.add(p);
+		}
 
 	}
 	
