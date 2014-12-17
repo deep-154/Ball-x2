@@ -38,8 +38,24 @@ public class MainMenu extends Activity{
 		paramsOpt.leftMargin = 54*width/100;
 		paramsOpt.topMargin = 43*height/100;
 		
+		ImageButton help = new ImageButton(this);
+		help.setBackgroundColor(Color.TRANSPARENT);
+		RelativeLayout.LayoutParams paramsHelp = new RelativeLayout.LayoutParams(
+				14 * width / 100, 20 * height / 100);
+		paramsHelp.leftMargin = 80 * width / 100;
+		paramsHelp.topMargin = 59 * height / 100;
+		
+		ImageButton credits = new ImageButton(this);
+		credits.setBackgroundColor(Color.TRANSPARENT);
+		RelativeLayout.LayoutParams paramsCredit = new RelativeLayout.LayoutParams(
+				12 * width / 100, 18 * height / 100);
+		paramsCredit.leftMargin = (int) (64.5 * width / 100);
+		paramsCredit.topMargin = 79 * height / 100;
+		
 		r.addView(play, params);
 		r.addView(options, paramsOpt);
+		r.addView(help, paramsHelp);
+		r.addView(credits, paramsCredit);
 		
 		
 		play.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +78,31 @@ public class MainMenu extends Activity{
 				 d.setContentView(R.layout.options);
 				 d.show();
 			  
+			}
+		});
+		help.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Dialog d = new Dialog(MainMenu.this);
+				d.setTitle("Help");
+				TextView tv = new TextView(MainMenu.this);
+				tv.setText("Aim of Game is to shoot the Bubbles from Gun. Also Avoid the bubbles from Hitting you.ENJOY!!");
+				tv.setBackgroundColor(Color.DKGRAY);
+				d.setContentView(tv);
+				d.show();
+
+			}
+		});
+
+		credits.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent("com.mdg.bubbletrouble.CREDITS");
+				startActivity(i);
 			}
 		});
 	}
