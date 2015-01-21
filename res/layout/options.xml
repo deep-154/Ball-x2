@@ -1,59 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:background="@drawable/blank" >
 
-    <CheckBox
-        android:id="@+id/checkBox2"
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/checkBox1"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="25dp"
-        android:text="Sound Effects" />
+        android:layout_alignParentTop="true"
+        android:src="@drawable/bt_nmmuted" />
 
-    <RadioGroup
-        android:id="@+id/rg"
+    <ImageView
+        android:id="@+id/ImageView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="10dp" >
-
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Manual" />
-        <RadioButton
-        android:id="@+id/radio0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="G-Sensor" />
-        
-    </RadioGroup>
-
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dp"
+        android:layout_toLeftOf="@+id/imageView1"
+        android:src="@drawable/bt_nmuted" />
     
 
-    <TextView
-        android:id="@+id/textView1"
+    <RadioButton
+        android:id="@+id/radioButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/checkBox2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="Choose Control Method"
-        android:textColor="@android:color/black"
-        android:textSize="25dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/ImageView01"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="16dp"
+        android:text="G-Sensor"
+        android:checked="true" 
+        />
 
-    <CheckBox
-        android:id="@+id/checkBox1"
+    <RadioButton
+        android:id="@+id/radioButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
-        android:text="Music" />
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/radioButton1"
+        android:layout_marginRight="22dp"
+        android:layout_marginTop="0dp"
+        android:text="Manual" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/radioButton1"
+        android:layout_below="@+id/radioButton1"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/acc_control" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/radioButton2"
+        android:layout_alignTop="@+id/imageView2"
+        android:src="@drawable/manual" />
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="OK" />
 
 </RelativeLayout>

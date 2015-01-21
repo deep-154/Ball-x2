@@ -30,10 +30,11 @@ public class Levels extends View {
 	static float arrowY = -1000, arrowX = -100;
 	float manVelocity, accelerometerSensorX = -1;
 	boolean shoot = false, manMove = true, otherShoot = false;
-	boolean powerUpSpike, powerUpTornado, powerUpShield = false,
+	static boolean powerUpSpike, powerUpTornado, powerUpShield = false,
 			powerUpArrow = true;
 	int isShooting = 0;
 	Bitmap man, man_left, man_right, arrow, pause, life;
+	Bitmap wall;
 	private ShapeDrawable ballDrawable;
 	Bitmap background, directionArrowLeft, directionArrowRight;
 	private Rect sourceRect; // the rectangle to be drawn from the animation
@@ -45,7 +46,7 @@ public class Levels extends View {
 	private int spriteWidth; // the width of the sprite to calculate the cut out
 								// rectangle
 	static float gameAreaHeight, gameAreaWidth;
-	int currentLevel = 1;
+	static int currentLevel = 1;  //currently running Level
 	int[] touchX = new int[2];
 	int[] touchY = new int[2];
 	static boolean pauseGame = false;
@@ -63,12 +64,16 @@ public class Levels extends View {
 	double risingFactor = 0.1;
 	int counter = 0, shieldTimeCounter = 0;
 	Activity act;
+	Paint paint;
+	Rect mainRect;
 
+	// SharedPreferences sharedPreferences;
 
 	public Levels(Context context, Activity activity) {
 		super(context);
 		// TODO Auto-generated constructor stub
 		act = activity;
+		paint = new Paint();
 		background = BitmapFactory.decodeResource(getResources(),
 				R.drawable.layout4);
 		man = BitmapFactory.decodeResource(getResources(), R.drawable.man);
@@ -84,7 +89,9 @@ public class Levels extends View {
 				R.drawable.arrow_left);
 		directionArrowRight = BitmapFactory.decodeResource(getResources(),
 				R.drawable.arrow_right);
-		sourceRect = new Rect(0, 0, man_right.getWidth() / 4, man.getHeight());
+		 wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);			
+		sourceRect = new Rect(0, 0, man.getWidth() / 4, man.getHeight());
+		
 		framePeriod = 150;
 		frameTicker = 0l;
 
@@ -124,22 +131,23 @@ public class Levels extends View {
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (oldw == 0)
 			initializeGame();
+		mainRect = new Rect(0, 0, getWidth(), getHeight());
 	}
 
 	public void initializeGame() {
 
-		initializeGamePanelArena(currentLevel);
-		initializeNumberOfBalls(currentLevel);
-		initializeTime(currentLevel);
+		initializeGamePanelArena();
+		initializeNumberOfBalls();
+		initializeTime();
 	}
 
-	void initializeNumberOfBalls(int level) {
+	void initializeNumberOfBalls() {
 
-		manX = 52 * gameAreaWidth / 100;
+		
 		int initialBallX = (int) (11 * gameAreaWidth / 100);
 		int initialBallY = (int) (50 * gameAreaHeight / 100);
-		int displacement = (int) (gameAreaHeight / 6);
-		switch (level) {
+		int displacement = (int) (gameAreaWidth / 10);
+		switch (currentLevel) {
 		case 1:
 			Ball b1 = new Ball(initialBallX + displacement,
 					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
@@ -178,21 +186,36 @@ public class Levels extends View {
 			radius.add(4 * BASE_RADIUS);
 			radius.add(8 * BASE_RADIUS);
 			break;
+		case 5:
+			Ball b8 = new Ball(initialBallX + displacement,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+			Ball b9 = new Ball(initialBallX + 7 * displacement,
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+			balls.add(b8);
+			balls.add(b9);
+
+			radius.add(4 * BASE_RADIUS);
+			radius.add(8 * BASE_RADIUS);
+			break;
 		}
 
 	}
 
-	void initializeGamePanelArena(int level) {
+	void initializeGamePanelArena() {
 
 		gameAreaHeight = 854 * getHeight() / 1000;
 		gameAreaWidth = 90 * getWidth() / 100;
 		BASE_RADIUS = (int) (gameAreaHeight / 48);
 		powerUpShield = false;
+		manX = 52 * gameAreaWidth / 100;
+		if(currentLevel==5){
+			manX = 32*gameAreaWidth / 100;
+		}
 
 	}
 
-	void initializeTime(int level) {
-		switch (level) {
+	void initializeTime() {
+		switch (currentLevel) {
 		case 1:
 			maxTime = 10000;
 			break;
@@ -205,7 +228,11 @@ public class Levels extends View {
 		case 4:
 			maxTime = 22000;
 			break;
+		case 5:
+			maxTime = 20000;
+			break;
 		}
+
 		time = maxTime;
 	}
 
@@ -215,6 +242,7 @@ public class Levels extends View {
 		updateBallPosition();
 		updateTimeCounter();
 		updateGiftPosition();
+		
 	}
 
 	void updateArrowPosition() {
@@ -234,15 +262,15 @@ public class Levels extends View {
 				arrowY = arrowY - 10;
 			}
 			if (arrowY < 38 * gameAreaHeight / 100) {
-				if(powerUpSpike==false){
-				arrowY = gameAreaHeight;
-				isShooting = 0;
-				}else{
-					arrowY =  38 * gameAreaHeight / 100;
+				if (powerUpSpike == false) {
+					arrowY = gameAreaHeight;
+					isShooting = 0;
+				} else {
+					arrowY = 38 * gameAreaHeight / 100;
 				}
-				
+
 			}
-			
+
 		}
 	}
 
@@ -262,9 +290,9 @@ public class Levels extends View {
 		sourceRect.left = currentFrame * spriteWidth;
 		sourceRect.right = sourceRect.left + spriteWidth;
 		manY = (int) (9 * gameAreaHeight / 10);
-		final float manSpeed = gameAreaHeight / 174;
+		final float manSpeed = gameAreaHeight / 160;
 
-		if (MainActivity.selectMethod == 1) { // if G-sensor is selected
+		if (MainMenu.selectMethod == 1) { // if G-sensor is selected
 			accelerometerSensorX = AccelerometerData.sensorX;
 			manVelocity = 2 * accelerometerSensorX;
 
@@ -273,8 +301,8 @@ public class Levels extends View {
 			} else {
 				manVelocity = (manVelocity / Math.abs(manVelocity)) * manSpeed;
 			}
-		} else if (MainActivity.selectMethod == 2) { // if manual control is
-														// selected
+		} else if (MainMenu.selectMethod == 2) { // if manual control is
+													// selected
 
 			Rect destArrowLeft = new Rect(5 * getWidth() / 100,
 					88 * getHeight() / 100, 13 * getWidth() / 100,
@@ -299,6 +327,11 @@ public class Levels extends View {
 		}
 		if (manX > gameAreaWidth - gameAreaWidth / 20) {
 			manX = gameAreaWidth - gameAreaWidth / 20;
+		}
+		if(currentLevel==5){
+			if(balls.size()>1&&(radius.get(0)==8*BASE_RADIUS||radius.get(1)==8*BASE_RADIUS)){
+			if(manX>52*gameAreaWidth/100- gameAreaWidth / 20)manX=52*gameAreaWidth/100- gameAreaWidth / 20;
+			}
 		}
 
 	}
@@ -342,7 +375,7 @@ public class Levels extends View {
 					R.drawable.bullet_tornado);
 			break;
 		case 7:
-			powerUpSpike=true;
+			powerUpSpike = true;
 			powerUpTornado = false;
 			powerUpArrow = true;
 			break;
@@ -375,10 +408,11 @@ public class Levels extends View {
 	}
 
 	void renderArrow(Canvas c) {
-		if(powerUpSpike){
-			if(arrowY <= 38 * gameAreaHeight / 100){
+		if (powerUpSpike) {
+			if (arrowY <= 38 * gameAreaHeight / 100) {
 				arrow = BitmapFactory.decodeResource(getResources(),
 						R.drawable.bullet_spike);
+				
 			}else{
 				arrow = BitmapFactory.decodeResource(getResources(),
 						R.drawable.bullet_simple);
@@ -387,22 +421,23 @@ public class Levels extends View {
 		float bottom = arrowY + arrow.getHeight();
 		if (bottom > gameAreaHeight)
 			bottom = gameAreaHeight;
-		Rect Rec2 = new Rect((int) arrowX, (int) arrowY,
-				(int) (arrowX + arrow.getWidth()), (int) (bottom));
-		c.drawBitmap(arrow, null, Rec2, null);
-
+		float arrowWidth = 15*gameAreaWidth/1000;
+		if(powerUpTornado)arrowWidth = 3*arrowWidth;
+		mainRect.set((int) arrowX, (int) arrowY,
+				(int) (arrowX + arrowWidth), (int) (bottom));
+		c.drawBitmap(arrow, null, mainRect, null);
+      // Log.e("skjdcnskj", ""+ arrow.getWidth());
 	}
 
 	void renderMan(Canvas c) {
-		Rect destRect = new Rect((int) manX, (int) manY,
-				(int) (manX + gameAreaWidth / 20),
+		mainRect.set((int) manX, (int) manY, (int) (manX + gameAreaWidth / 20),
 				(int) (manY + gameAreaHeight / 10));
 		if (manVelocity > 0) {
-			c.drawBitmap(man_right, sourceRect, destRect, null);
+			c.drawBitmap(man_right, sourceRect, mainRect, null);
 		} else if (manVelocity < 0) {
-			c.drawBitmap(man_left, sourceRect, destRect, null);
+			c.drawBitmap(man_left, sourceRect, mainRect, null);
 		} else
-			c.drawBitmap(man, null, destRect, null);
+			c.drawBitmap(man, null, mainRect, null);
 	}
 
 	void renderBalls(Canvas c) {
@@ -426,7 +461,7 @@ public class Levels extends View {
 		// drawing play/pause button
 		Bitmap checkPauseBitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.pause);
-		Rect r = new Rect((int) (97.3 * gameAreaWidth / 100),
+		mainRect.set((int) (97.3 * gameAreaWidth / 100),
 				(int) (11 * gameAreaHeight / 100),
 				(int) (100 * gameAreaWidth / 100),
 				(int) (18 * gameAreaHeight / 100));
@@ -434,7 +469,7 @@ public class Levels extends View {
 				(int) (9.5 * gameAreaHeight / 100),
 				(int) (101 * gameAreaWidth / 100),
 				(int) (19 * gameAreaHeight / 100));
-		c.drawBitmap(pause, null, r, null);
+		c.drawBitmap(pause, null, mainRect, null);
 
 		if (o.contains(touchX[1], touchY[1])) {
 			// BITMAP TOUCHED
@@ -454,6 +489,25 @@ public class Levels extends View {
 		renderingTimer(c);
 		displayingLivesAndScores(c);
 		renderingNavigationArrows(c);
+		if (currentLevel == 5) {
+			renderingWall(c);
+		}
+
+	}
+
+	void renderingWall(Canvas c) {
+		mainRect.set((int) (52 * gameAreaWidth / 100),
+				(int) (385 * gameAreaHeight / 1000),
+				(int) (58 * gameAreaWidth / 100), (int) (90*gameAreaHeight/100));
+		c.drawBitmap(wall, null, mainRect, null);
+		if(balls.size()>1&&(radius.get(0)==8*BASE_RADIUS||radius.get(1)==8*BASE_RADIUS)){
+		mainRect.set((int) (52 * gameAreaWidth / 100),
+				(int) (90 * gameAreaHeight / 100),
+				(int) (58 * gameAreaWidth / 100), (int) (gameAreaHeight));
+		paint.reset();
+		paint.setColor(Color.argb(200, 68, 68, 68));
+		c.drawRect(mainRect, paint);
+		}
 	}
 
 	void renderingTimer(Canvas c) {
@@ -461,84 +515,77 @@ public class Levels extends View {
 			message = "Time Up";
 			settingDelay();
 		}
-		Paint p1 = new Paint();
-		p1.setColor(Color.BLACK);
-		p1.setStyle(Style.STROKE);
-		p1.setStrokeWidth(gameAreaHeight / 61);
-
-		Paint p2 = new Paint();
-		p2.setColor(Color.rgb(249, 224, 134));
-		p2.setStyle(Style.STROKE);
-		p2.setStrokeWidth(gameAreaHeight / 56);
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(gameAreaHeight / 61);
 		int Radius = 9 * getHeight() / 100;
 		int degrees = -360 * time / maxTime;
 		c.drawCircle((int) (88.5 * getWidth() / 100),
-				(int) (12 * getHeight() / 100), (int) Radius, p1);
+				(int) (12 * getHeight() / 100), (int) Radius, paint);
+
+		paint.setColor(Color.rgb(249, 224, 134));
+		paint.setStrokeWidth(gameAreaHeight / 56);
 
 		RectF rectF = new RectF((int) (88.5 * getWidth() / 100 - Radius), 12
 				* getHeight() / 100 - Radius,
 				(int) (88.5 * getWidth() / 100 + Radius), 12 * getHeight()
 						/ 100 + Radius);
-		c.drawArc(rectF, 270, degrees, false, p2);
+		c.drawArc(rectF, 270, degrees, false, paint);
 
 		int glowWidth = (int) (gameAreaHeight / 80);
-		Paint p3 = new Paint();
-		p3.setStyle(Style.STROKE);
-		p3.setStrokeWidth(glowWidth);
 
-		p3.setARGB(100, 249, 224, 134);
+		paint.setStrokeWidth(glowWidth);
+		paint.setARGB(100, 249, 224, 134);
 		int innerRadius = Radius - glowWidth;
-		RectF rectF2 = new RectF((int) (88.5 * getWidth() / 100 - innerRadius),
-				12 * getHeight() / 100 - innerRadius,
+		rectF.set((int) (88.5 * getWidth() / 100 - innerRadius), 12
+				* getHeight() / 100 - innerRadius,
 				(int) (88.5 * getWidth() / 100 + innerRadius), 12 * getHeight()
 						/ 100 + innerRadius);
-		c.drawArc(rectF2, 270, degrees, false, p3);
+		c.drawArc(rectF, 270, degrees, false, paint);
 		int outerRadius = Radius + glowWidth;
-		RectF rectF3 = new RectF((int) (88.5 * getWidth() / 100 - outerRadius),
-				12 * getHeight() / 100 - outerRadius,
+		rectF.set((int) (88.5 * getWidth() / 100 - outerRadius), 12
+				* getHeight() / 100 - outerRadius,
 				(int) (88.5 * getWidth() / 100 + outerRadius), 12 * getHeight()
 						/ 100 + outerRadius);
-		c.drawArc(rectF3, 270, degrees, false, p3);
+		c.drawArc(rectF, 270, degrees, false, paint);
+
+		paint.reset();
 	}
 
 	void displayingLivesAndScores(Canvas c) {
 		// displaying levelNumber
 		Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
 				"fonts/chewy.ttf");
-		Paint p = new Paint();
-		p.setTypeface(tf);
-		p.setTextSize(5 * gameAreaHeight / 56);
+		paint.setTypeface(tf);
+		paint.setTextSize(5 * gameAreaHeight / 56);
 		c.drawText("Level # " + currentLevel, 48 * gameAreaWidth / 100,
-				95 * getHeight() / 100, p);
+				95 * getHeight() / 100, paint);
 		// displaying no. of Lives
-		Rect y = new Rect((int) (45 * gameAreaWidth / 100),
+		mainRect.set((int) (45 * gameAreaWidth / 100),
 				(int) (12 * gameAreaHeight / 100),
 				(int) (45 * gameAreaWidth / 100 + gameAreaHeight / 10),
 				(int) (10 * gameAreaHeight / 100 + gameAreaHeight / 9));
-		c.drawBitmap(life, null, y, null);
-		Paint text = new Paint();
-		text.setColor(Color.BLACK);
-		text.setTextSize((float) (1.1 * gameAreaHeight / 9));
-		text.setTypeface(tf);
-		c.drawText("" + numberOfLife, 53 * gameAreaWidth / 100,
-				21 * gameAreaHeight / 100, text);
 
-		// ------------------------------------------------------------------------------
+		c.drawBitmap(life, null, mainRect, null);
+
+		paint.setTextSize((float) (1.1 * gameAreaHeight / 9));
+		c.drawText("" + numberOfLife, 53 * gameAreaWidth / 100,
+				21 * gameAreaHeight / 100, paint);
+
 		// display scores
 		c.drawText("" + score, 6 * gameAreaWidth / 100,
-				21 * gameAreaHeight / 100, text);
+				21 * gameAreaHeight / 100, paint);
 	}
 
 	void renderingNavigationArrows(Canvas c) {
-		if (MainActivity.selectMethod == 2) { // whem Manual method is selected
-			Rect destArrowLeft = new Rect(5 * getWidth() / 100,
-					88 * getHeight() / 100, 13 * getWidth() / 100,
-					97 * getHeight() / 100);
-			c.drawBitmap(directionArrowLeft, null, destArrowLeft, null);
-			Rect destArrowRight = new Rect(15 * getWidth() / 100,
-					88 * getHeight() / 100, 23 * getWidth() / 100,
-					97 * getHeight() / 100);
-			c.drawBitmap(directionArrowRight, null, destArrowRight, null);
+		if (MainMenu.selectMethod == 2) { // whem Manual method is selected
+
+			mainRect.set(5 * getWidth() / 100, 88 * getHeight() / 100,
+					13 * getWidth() / 100, 97 * getHeight() / 100);
+			c.drawBitmap(directionArrowLeft, null, mainRect, null);
+			mainRect.set(15 * getWidth() / 100, 88 * getHeight() / 100,
+					23 * getWidth() / 100, 97 * getHeight() / 100);
+			c.drawBitmap(directionArrowRight, null, mainRect, null);
 		}
 	}
 
@@ -608,10 +655,10 @@ public class Levels extends View {
 		if (powerUpShield) {
 			Bitmap shield = BitmapFactory.decodeResource(getResources(),
 					R.drawable.armor);
-			Rect destRect = new Rect((int) manX, (int) manY,
+			mainRect.set((int) manX, (int) manY,
 					(int) (manX + gameAreaWidth / 20),
 					(int) (manY + gameAreaHeight / 10));
-			c.drawBitmap(shield, null, destRect, null);
+			c.drawBitmap(shield, null, mainRect, null);
 			shieldTimeCounter--;
 			if (shieldTimeCounter < 0) {
 				powerUpShield = false;
@@ -720,6 +767,7 @@ public class Levels extends View {
 				Intent i = new Intent(getContext(), MainActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				currentLevel = 1;
 				getContext().startActivity(i);
 				popUp.dismiss();
 			}
@@ -731,6 +779,7 @@ public class Levels extends View {
 				System.exit(0);
 			}
 		});
+		popUp.setCancelable(false);
 		popUp.show();
 
 	}
@@ -783,23 +832,22 @@ public class Levels extends View {
 	public void onDraw(Canvas c) {
 		// TODO Auto-generated method stub
 		super.onDraw(c);
+        paint.reset();
+		mainRect.set(0, 0,getWidth(), getHeight());
+		paint.setFilterBitmap(true);
+		c.drawBitmap(background, null, mainRect, paint);
+		paint.reset();
 
-		Rect dest = new Rect(0, 0, getWidth(), getHeight());
-		Paint backPaint = new Paint();
-		backPaint.setFilterBitmap(true);
-		c.drawBitmap(background, null, dest, backPaint);
-
-		// ----------------------------------------------------------------------------------
 		// condition to pause the game is applied here
-		if (MainActivity.selectMethod != -1) {
-			if (pauseGame == false) {
-				updateGame();
-			}
+
+		if (pauseGame == false) {
+			updateGame();
 		}
+
 		renderGame(c);
 		detectCollison();
 
-		if (numberOfLife > 0 && currentLevel < 5) {
+		if (numberOfLife > 0 && currentLevel < 6) {
 			if (balls.isEmpty()) {
 				gifts.clear();
 				currentLevel++;
@@ -808,19 +856,19 @@ public class Levels extends View {
 			}
 		}
 		if (counter > 1 && counter < 60) {
-			Paint text = new Paint();
-			text.setColor(Color.BLACK);
-			text.setTextSize((float) (1.1 * gameAreaHeight / 9));
+			paint.setColor(Color.BLACK);
+			paint.setTextSize((float) (1.1 * gameAreaHeight / 9));
 			Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
 					"fonts/chewy.ttf");
-			text.setTypeface(tf);
+			paint.setTypeface(tf);
 			c.drawText(message, 40 * gameAreaWidth / 100,
-					60 * gameAreaHeight / 100, text);
+					60 * gameAreaHeight / 100, paint);
+			paint.reset();
 		}
 
 		invalidate();
-
 	}
 
+	
 
 }

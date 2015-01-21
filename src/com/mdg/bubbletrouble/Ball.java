@@ -4,18 +4,17 @@ package com.mdg.bubbletrouble;
 
 public class Ball {
 
-	final int MAN_HEIGHT = 69, MAN_WIDTH = 50;
-
 	float H, W;
 	public float ballX = -1;
 	public float ballY = -1;
-	float velocityX = (float) 2.2;
+	float velocityX = (float) 2.8;
 	float velocityY = 4;
 	float gravity = (float) 0.2;
 	float arrowX, arrowY, manX, manY;
 	int ballHit = 0;
-	int manHit = 0;
-	final int BASE_RADIUS = 15;
+	boolean manballCollison= false;
+	int BASE_RADIUS;
+	float arrowWidth,arrowHeight;
     
 	
 	public Ball(int a, int b,double c) {
@@ -32,47 +31,79 @@ public class Ball {
 			arrowX = Levels.arrowX;
 			arrowY = Levels.arrowY;
 			manX = Levels.manX;
-		    manY = H - MAN_HEIGHT;
+			BASE_RADIUS = Levels.BASE_RADIUS;
+		    manY = 9*H/10;
 		    ballHit = 0;
-		    manHit =0;
+		    manballCollison= false;
 		    
 			ballX = ballX + velocityX;
 			ballY = ballY + velocityY;
-			if ((ballX > W - radius ) || (ballX < 0)) {
+			if ((ballX > W - radius ) || (ballX < 11*W/100)) {
 				velocityX = -velocityX;
 			}
+			if(Levels.currentLevel==5){
+			if(((ballX>52*W/100-radius)&&ballX<58*W/100)||((ballX<58*W/100)&&ballX>52*W/100)){
+				velocityX = -velocityX;
+			}
+			}
+			
 			if ((ballY > H - radius)) {
 				if (radius > 4 * BASE_RADIUS) {
-					velocityY = (float) ((-1)*(6 + (radius / (1.5 * BASE_RADIUS))));
+					velocityY = (float) ((-1)*(5 + (radius / (1.5 * BASE_RADIUS))));
 				} else {
 					velocityY = (float) (-1 *( 6 +(radius/ BASE_RADIUS)));
 				}
 				
 			}
-			if (velocityY > 0) {
+			
 				velocityY = velocityY + gravity;
-			}
-			if (velocityY < 0) {
-				velocityY = velocityY + gravity;
-			}
 		
-
-		if (arrowX > ballX && arrowX < ballX + radius) {
+				
+	/*	if (arrowX > ballX && arrowX < ballX + radius) {
 			if (arrowY != H) {
 				if (ballY + radius > arrowY) {
 					ballHit = 1;
 					if(velocityX>0){
 					velocityX = velocityX*-1;
 					}
-					velocityY =-4;
+					if(radius<8*BASE_RADIUS)velocityY =-4;
+					else velocityY = -2;
 					}
 			}
+		}*/
+				if(Levels.powerUpArrow)	{
+					arrowWidth = 15*W/1000;
+					arrowHeight = H;
+				}else if(Levels.powerUpTornado){
+					arrowWidth = 45*W/1000;
+					arrowHeight = arrowY+30*W/1000;
+				}
+		if (arrowX < ballX + radius &&
+				   arrowX +arrowWidth  > ballX &&
+				   arrowY < ballY + radius &&
+				   arrowHeight> ballY) {
+			ballHit = 1;
+			if(velocityX>0){
+			velocityX = velocityX*-1;
+			}
+			if(radius<8*BASE_RADIUS)velocityY =-4;
+			else velocityY = -2;
+				}
+		
+		if(ballY<manY+H/20){
+		if (ballX < manX + W/23 && ballX + radius > manX+W/100
+				&& ballY < manY + H/10 && radius+ ballY > manY) {
+			
+			manballCollison= true;
+		}else{
+			if (ballX < manX + W/25 && ballX + radius > manX+W/100
+					&& ballY < manY + H/10 && radius+ ballY > manY) {
+				
+				manballCollison= true;
 		}
-		if (ballX < manX + MAN_WIDTH && ballX + radius > manX
-				&& ballY < manY + MAN_HEIGHT && radius + ballY > manY) {
-			manHit = 1;
 		}
 
 	}
 
+}
 }
