@@ -1,5 +1,6 @@
 package com.mdg.bubbletrouble;
 
+import android.util.Log;
 
 
 public class Ball {
@@ -7,7 +8,7 @@ public class Ball {
 	float H, W;
 	public float ballX = -1;
 	public float ballY = -1;
-	float velocityX = (float) 2.8;
+	float velocityX = (float) 2.6;
 	float velocityY = 4;
 	float gravity = (float) 0.2;
 	float arrowX, arrowY, manX, manY;
@@ -17,11 +18,12 @@ public class Ball {
 	float arrowWidth,arrowHeight;
     
 	
-	public Ball(int a, int b,double c) {
+	public Ball(int a, int b,double c,float d) {
 		// TODO Auto-generated constructor stub
 		ballX = a;
 		ballY = b;
 		velocityY =(float) c;
+		velocityX = d;
 	}
 
 	void moveBall(float radius) {
@@ -49,28 +51,15 @@ public class Ball {
 			
 			if ((ballY > H - radius)) {
 				if (radius > 4 * BASE_RADIUS) {
-					velocityY = (float) ((-1)*(5 + (radius / (1.5 * BASE_RADIUS))));
+					velocityY = (float) ((-1)*(9.6));
 				} else {
-					velocityY = (float) (-1 *( 6 +(radius/ BASE_RADIUS)));
+					velocityY = (float) (-1 *( 5 +(radius/ BASE_RADIUS)));
 				}
 				
 			}
 			
 				velocityY = velocityY + gravity;
 		
-				
-	/*	if (arrowX > ballX && arrowX < ballX + radius) {
-			if (arrowY != H) {
-				if (ballY + radius > arrowY) {
-					ballHit = 1;
-					if(velocityX>0){
-					velocityX = velocityX*-1;
-					}
-					if(radius<8*BASE_RADIUS)velocityY =-4;
-					else velocityY = -2;
-					}
-			}
-		}*/
 				if(Levels.powerUpArrow)	{
 					arrowWidth = 15*W/1000;
 					arrowHeight = H;
@@ -83,12 +72,14 @@ public class Ball {
 				   arrowY < ballY + radius &&
 				   arrowHeight> ballY) {
 			ballHit = 1;
-			if(velocityX>0){
-			velocityX = velocityX*-1;
+			if(velocityX>0||velocityX==0){
+			velocityX = -24*W/10000;
 			}
-			if(radius<8*BASE_RADIUS)velocityY =-4;
+			if(radius<6*BASE_RADIUS)velocityY =-4;
 			else velocityY = -2;
 				}
+		if(radius==6*BASE_RADIUS)
+		Log.w("dhcbjdscnksdjncks", ""+velocityY);
 		
 		if(ballY<manY+H/20){
 		if (ballX < manX + W/23 && ballX + radius > manX+W/100
@@ -97,12 +88,11 @@ public class Ball {
 			manballCollison= true;
 		}else{
 			if (ballX < manX + W/25 && ballX + radius > manX+W/100
-					&& ballY < manY + H/10 && radius+ ballY > manY) {
-				
+					&& ballY < manY + H/10 && radius+ ballY > manY) {				
 				manballCollison= true;
 		}
 		}
-
+        
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.mdg.bubbletrouble;
 
+import android.graphics.Bitmap;
+
 public class PowerUp {
 
 	float giftX;
@@ -7,11 +9,13 @@ public class PowerUp {
 	int id;
 	boolean giftTaken=false;
 	float manX;
+	Bitmap gift;
 	
-	public PowerUp(float a,float b,int c){
+	public PowerUp(float a,float b,int c,Bitmap d){
 		giftX = a;
 		giftY = b;
 		id = c;
+		gift = d;
 		
 	}
 	

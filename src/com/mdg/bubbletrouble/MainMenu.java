@@ -26,6 +26,7 @@ public class MainMenu extends Activity {
 	Dialog d;
 	static int selectMethod = 1;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -170,6 +171,7 @@ public class MainMenu extends Activity {
 
 	}
 
+	
 	@Override
 	protected void onPause() {
 		super.onPause();

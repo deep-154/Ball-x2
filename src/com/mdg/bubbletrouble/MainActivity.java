@@ -33,6 +33,7 @@ public class MainActivity extends Activity{
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 	    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	    data.registerSensor(sensor, sensorManager);	
+	   
 	 
 	}
 	
@@ -53,7 +54,7 @@ public class MainActivity extends Activity{
 	            public void onClick(DialogInterface dialog, int which) {
 
 	                //Stop the activity
-	                MainActivity.this.finish();
+	                finish();
 	            }
 
 	        })
@@ -75,6 +76,7 @@ public class MainActivity extends Activity{
 	    }
 
 	}
+	
 	
 	@Override
     protected void onPause() {

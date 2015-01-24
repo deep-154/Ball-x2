@@ -44,9 +44,9 @@ public class Levels extends View {
 	private long frameTicker; // the time of the last frame update
 	private int framePeriod; // milliseconds between each frame (1000/fps)
 	private int spriteWidth; // the width of the sprite to calculate the cut out
-								// rectangle
+							 // rectangle
 	static float gameAreaHeight, gameAreaWidth;
-	static int currentLevel = 1;  //currently running Level
+	static int currentLevel = 7;  //currently running Level
 	int[] touchX = new int[2];
 	int[] touchY = new int[2];
 	static boolean pauseGame = false;
@@ -129,9 +129,12 @@ public class Levels extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		// TODO Auto-generated method stub
 		super.onSizeChanged(w, h, oldw, oldh);
-		if (oldw == 0)
+		if (oldw == 0){
+			mainRect = new Rect(0, 0, getWidth(), getHeight());
+			currentLevel=7;
 			initializeGame();
-		mainRect = new Rect(0, 0, getWidth(), getHeight());
+		}
+		
 	}
 
 	public void initializeGame() {
@@ -147,19 +150,21 @@ public class Levels extends View {
 		int initialBallX = (int) (11 * gameAreaWidth / 100);
 		int initialBallY = (int) (50 * gameAreaHeight / 100);
 		int displacement = (int) (gameAreaWidth / 10);
+		float velocityX = (float) (0.00241*gameAreaWidth); 
+		
 		switch (currentLevel) {
 		case 1:
 			Ball b1 = new Ball(initialBallX + displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			balls.add(b1);
 			radius.add(2 * BASE_RADIUS);
 			break;
 
 		case 2:
 			Ball b2 = new Ball(initialBallX + displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			Ball b3 = new Ball(initialBallX + 4 * displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			balls.add(b2);
 			balls.add(b3);
 			radius.add(4 * BASE_RADIUS);
@@ -168,41 +173,69 @@ public class Levels extends View {
 
 		case 3:
 			Ball b4 = new Ball(initialBallX + displacement, initialBallY,
-					risingFactor);
+					risingFactor,velocityX);
 			balls.add(b4);
-			radius.add(8 * BASE_RADIUS);
+			radius.add(6 * BASE_RADIUS);
 			break;
 		case 4:
 			Ball b5 = new Ball(initialBallX + displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			Ball b6 = new Ball(initialBallX + 4 * displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			Ball b7 = new Ball(initialBallX + 7 * displacement, initialBallY,
-					risingFactor);
+					risingFactor,velocityX);
 			balls.add(b5);
 			balls.add(b6);
 			balls.add(b7);
 			radius.add(2 * BASE_RADIUS);
 			radius.add(4 * BASE_RADIUS);
-			radius.add(8 * BASE_RADIUS);
+			radius.add(6 * BASE_RADIUS);
 			break;
 		case 5:
 			Ball b8 = new Ball(initialBallX + displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			Ball b9 = new Ball(initialBallX + 7 * displacement,
-					(int) (initialBallY + gameAreaHeight / 10), risingFactor);
+					(int) (initialBallY + gameAreaHeight / 10), risingFactor,velocityX);
 			balls.add(b8);
 			balls.add(b9);
 
 			radius.add(4 * BASE_RADIUS);
-			radius.add(8 * BASE_RADIUS);
+			radius.add(6 * BASE_RADIUS);
+			break;
+		case 6:
+			displacement = (int) (12*gameAreaWidth/100);
+			for(int i =1;i<7;i++){
+				Ball b = new Ball(initialBallX + i*displacement,
+						(int) (initialBallY+gameAreaHeight / 10), risingFactor,velocityX);
+				balls.add(b);
+				radius.add(2*BASE_RADIUS);
+			}
+			
+			break;
+		case 7:
+			
+			for(int i =0;i<3;i++){
+				displacement = (int) (6*gameAreaWidth/100);
+				Ball b = new Ball((int) (initialBallX +3*gameAreaWidth/200+ i*displacement),
+						(int) (initialBallY+gameAreaHeight / 12), risingFactor,0);
+				balls.add(b);
+				radius.add(4*BASE_RADIUS);
+				Ball c = new Ball((int) (gameAreaWidth-4*BASE_RADIUS -3*gameAreaWidth/200- i*displacement),
+						(int) (initialBallY+gameAreaHeight / 12), risingFactor,0);
+				balls.add(c);
+				radius.add(4*BASE_RADIUS);
+			}
+			Ball b = new Ball((int) (initialBallX +22*gameAreaWidth/100),
+					(int) (initialBallY-gameAreaHeight / 20), risingFactor,velocityX);
+			balls.add(b);
+			radius.add(6*BASE_RADIUS);
 			break;
 		}
 
 	}
 
 	void initializeGamePanelArena() {
-
+		
 		gameAreaHeight = 854 * getHeight() / 1000;
 		gameAreaWidth = 90 * getWidth() / 100;
 		BASE_RADIUS = (int) (gameAreaHeight / 48);
@@ -229,7 +262,13 @@ public class Levels extends View {
 			maxTime = 22000;
 			break;
 		case 5:
-			maxTime = 20000;
+			maxTime = 18000;
+			break;
+		case 6:
+			maxTime = 12000;
+			break;
+		case 7:
+			maxTime = 22000;
 			break;
 		}
 
@@ -329,7 +368,7 @@ public class Levels extends View {
 			manX = gameAreaWidth - gameAreaWidth / 20;
 		}
 		if(currentLevel==5){
-			if(balls.size()>1&&(radius.get(0)==8*BASE_RADIUS||radius.get(1)==8*BASE_RADIUS)){
+			if(balls.size()>1&&(radius.get(0)==6*BASE_RADIUS||radius.get(1)==6*BASE_RADIUS)){
 			if(manX>52*gameAreaWidth/100- gameAreaWidth / 20)manX=52*gameAreaWidth/100- gameAreaWidth / 20;
 			}
 		}
@@ -465,13 +504,13 @@ public class Levels extends View {
 				(int) (11 * gameAreaHeight / 100),
 				(int) (100 * gameAreaWidth / 100),
 				(int) (18 * gameAreaHeight / 100));
-		Rect o = new Rect((int) (95.3 * gameAreaWidth / 100),
+		c.drawBitmap(pause, null, mainRect, null);
+		mainRect.set((int) (95.3 * gameAreaWidth / 100),
 				(int) (9.5 * gameAreaHeight / 100),
 				(int) (101 * gameAreaWidth / 100),
 				(int) (19 * gameAreaHeight / 100));
-		c.drawBitmap(pause, null, mainRect, null);
-
-		if (o.contains(touchX[1], touchY[1])) {
+		
+		if (mainRect.contains(touchX[1], touchY[1])) {
 			// BITMAP TOUCHED
 			isShooting = 0;
 			touchX[1] = touchY[1] = 0;
@@ -485,7 +524,7 @@ public class Levels extends View {
 						R.drawable.pause);
 			}
 		}
-
+         checkPauseBitmap.recycle();
 		renderingTimer(c);
 		displayingLivesAndScores(c);
 		renderingNavigationArrows(c);
@@ -500,7 +539,7 @@ public class Levels extends View {
 				(int) (385 * gameAreaHeight / 1000),
 				(int) (58 * gameAreaWidth / 100), (int) (90*gameAreaHeight/100));
 		c.drawBitmap(wall, null, mainRect, null);
-		if(balls.size()>1&&(radius.get(0)==8*BASE_RADIUS||radius.get(1)==8*BASE_RADIUS)){
+		if(balls.size()>1&&(radius.get(0)==6*BASE_RADIUS||radius.get(1)==6*BASE_RADIUS)){
 		mainRect.set((int) (52 * gameAreaWidth / 100),
 				(int) (90 * gameAreaHeight / 100),
 				(int) (58 * gameAreaWidth / 100), (int) (gameAreaHeight));
@@ -519,7 +558,9 @@ public class Levels extends View {
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(gameAreaHeight / 61);
 		int Radius = 9 * getHeight() / 100;
-		int degrees = -360 * time / maxTime;
+		int degrees =0;
+		if(maxTime!=0){degrees = -360 * time / maxTime;}
+		
 		c.drawCircle((int) (88.5 * getWidth() / 100),
 				(int) (12 * getHeight() / 100), (int) Radius, paint);
 
@@ -590,64 +631,17 @@ public class Levels extends View {
 	}
 
 	void renderGifts(Canvas c) {
-		Bitmap gift = null;
 		float giftWidth = gameAreaWidth / 55;
 		for (int i = 0; i < gifts.size(); i++) {
-			switch (gifts.get(i).id) {
-			case 2:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_life);
-				break;
-			case 3:
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_time);
-				break;
-			case 4:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_armor);
-				break;
-			case 5:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_laser);
-				break;
-			case 6:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_tornado);
-				break;
-			case 7:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_spike);
-				break;
-			case 8:
-				giftWidth = gameAreaWidth / 65;
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_arrow);
-				break;
-			case 9:
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_coin);
-				break;
-			case 10:
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_coins);
-				break;
-			case 11:
-				gift = BitmapFactory.decodeResource(getResources(),
-						R.drawable.gift_dollar);
-				break;
-			}
-			if (gift != null) {
+			int id = gifts.get(i).id;
+			if(id==2||id==4||id==5||id==6||id==7||id==8||id==5||id==5)giftWidth = gameAreaWidth / 65;
+	
 				Rect r = new Rect((int) (gifts.get(i).giftX - giftWidth),
 						(int) (gifts.get(i).giftY),
 						(int) (gifts.get(i).giftX + giftWidth),
 						(int) (gifts.get(i).giftY + gameAreaHeight / 15));
-				c.drawBitmap(gift, null, r, null);
-			}
+				c.drawBitmap(gifts.get(i).gift, null, r, null);
+		
 		}
 	}
 
@@ -679,7 +673,9 @@ public class Levels extends View {
 		for (int i = 0; i < balls.size(); i++) {
 			if (balls.get(i).ballHit == 1) {
 				score = score + 10;// incrementing scores
-				radius.set(i, radius.get(i) / 2);
+				if(radius.get(i)>2*BASE_RADIUS){
+				radius.set(i, radius.get(i)-2*BASE_RADIUS);
+				}else radius.set(i, radius.get(i)/2);
 				arrowY = gameAreaHeight;
 				isShooting = 0;
 
@@ -695,7 +691,7 @@ public class Levels extends View {
 					else
 						risingFactor = -2;
 
-					Ball q = new Ball(ballX, ballY, risingFactor);
+					Ball q = new Ball(ballX, ballY, risingFactor,24*gameAreaWidth/10000);
 					balls.add(q);
 					radius.add(radius.get(i));
 					generatePowerUps(balls.get(i).ballY);// generating bonous
@@ -767,8 +763,12 @@ public class Levels extends View {
 				Intent i = new Intent(getContext(), MainActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				currentLevel = 1;
 				getContext().startActivity(i);
+				try{
+				((Activity)getContext()).finish();
+				}catch(ClassCastException e){
+					e.printStackTrace();
+				}
 				popUp.dismiss();
 			}
 		});
@@ -821,8 +821,52 @@ public class Levels extends View {
 				generatedPowerUpId = 7;
 			break;
 		}
+		Bitmap gift = null;
+		switch (generatedPowerUpId) {
+		case 2:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_life);
+			break;
+		case 3:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_time);
+			break;
+		case 4:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_armor);
+			break;
+		case 5:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_laser);
+			break;
+		case 6:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_tornado);
+			break;
+		case 7:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_spike);
+			break;
+		case 8:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_arrow);
+			break;
+		case 9:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_coin);
+			break;
+		case 10:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_coins);
+			break;
+		case 11:
+			gift = BitmapFactory.decodeResource(getResources(),
+					R.drawable.gift_dollar);
+			break;
+		}
+
 		if (generatedPowerUpId != 1) {
-			PowerUp p = new PowerUp(arrowX, giftY, generatedPowerUpId);
+			PowerUp p = new PowerUp(arrowX, giftY, generatedPowerUpId,gift);
 			gifts.add(p);
 		}
 
@@ -847,15 +891,20 @@ public class Levels extends View {
 		renderGame(c);
 		detectCollison();
 
-		if (numberOfLife > 0 && currentLevel < 6) {
+		if (numberOfLife > 0 && currentLevel < 8) {
 			if (balls.isEmpty()) {
 				gifts.clear();
+				if(currentLevel==7){
+					//think soon
+				}else{
 				currentLevel++;
 				initializeGame();
 				updatePowerUps(8);
+				}
 			}
 		}
-		if (counter > 1 && counter < 60) {
+		
+        		if (counter > 1 && counter < 60) {
 			paint.setColor(Color.BLACK);
 			paint.setTextSize((float) (1.1 * gameAreaHeight / 9));
 			Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
@@ -865,7 +914,8 @@ public class Levels extends View {
 					60 * gameAreaHeight / 100, paint);
 			paint.reset();
 		}
-
+		
+		//Log.w("skjdcnskj", ""+ balls.size());
 		invalidate();
 	}
 
