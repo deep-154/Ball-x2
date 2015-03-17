@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,7 +32,7 @@ public class MainActivity extends Activity{
     static MainActivity activity;
     int height,width;
 	AccelerometerData data = new AccelerometerData();
-    static TextView noOflevel,scoreView;
+    static TextView noOflevel,scoreView,lifeView;
     ImageButton pause,play;
 	
 	@Override
@@ -91,6 +92,18 @@ public class MainActivity extends Activity{
         paramsScore.leftMargin = 55 * width / 100;
         paramsScore.topMargin = 45*height / 1000;
         relativeLayout.addView(scoreView,paramsScore);
+
+        lifeView = new TextView(this);
+        lifeView.setGravity(Gravity.CENTER);
+        lifeView.setTextColor(Color.WHITE);
+        lifeView.setTypeface(custom_font);
+        lifeView.setTextSize(65 * height / 1000);
+        lifeView.setBackgroundResource(R.drawable.btn_life);
+        RelativeLayout.LayoutParams paramsLife = new RelativeLayout.LayoutParams(
+                10 * width / 100, 17 * height / 100);
+        paramsLife.leftMargin = 72 * width / 100;
+        paramsLife.topMargin = 5*height / 100;
+        relativeLayout.addView(lifeView,paramsLife);
 
 
 

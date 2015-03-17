@@ -531,6 +531,7 @@ public class Levels extends View {
 			renderingWall(c);
 		}
         MainActivity.scoreView.setText(""+score);
+        MainActivity.lifeView.setText(""+numberOfLife);
 
 	}
 
