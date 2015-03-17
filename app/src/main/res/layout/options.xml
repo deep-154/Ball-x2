@@ -33,6 +33,18 @@
 
     </RadioGroup>
 
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:text="OK"
+        android:id="@+id/button"
+        android:background="@drawable/btn_ok"
+        android:layout_marginRight="34dp"
+        android:layout_marginEnd="34dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/radioGroup"
+        android:layout_alignEnd="@+id/radioGroup"
+        android:layout_marginBottom="36dp" />
 
 
 </RelativeLayout>

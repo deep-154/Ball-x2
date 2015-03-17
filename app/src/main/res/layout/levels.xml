@@ -5,6 +5,8 @@
     android:id="@+id/mainView"
     android:background="@drawable/layout">
 
+
+
     <view
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -14,14 +16,6 @@
         android:layerType="hardware"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/life"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
 
 

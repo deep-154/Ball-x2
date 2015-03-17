@@ -228,7 +228,7 @@ public class Levels extends View {
 
 	void initializeGamePanelArena() {
 
-        MainActivity.mlife.setText(""+numberOfLife);
+        MainActivity.noOflevel.setText(""+currentLevel);
 		gameAreaHeight = 98 * getHeight() / 100;
 		gameAreaWidth = getWidth();
 		BASE_RADIUS = (int) (gameAreaHeight / 48);
@@ -418,7 +418,6 @@ public class Levels extends View {
 		switch (id) {
 		case 2:
 			numberOfLife++;
-            MainActivity.mlife.setText(""+numberOfLife);
 			break;
 		case 3:
 			time = time + 1000;
@@ -531,6 +530,7 @@ public class Levels extends View {
 		if (currentLevel == 5) {
 			renderingWall(c);
 		}
+        MainActivity.scoreView.setText(""+score);
 
 	}
 
@@ -701,7 +701,7 @@ public class Levels extends View {
 			initializeGame();
 			updatePowerUps(8);
 		} else {
-            MainActivity.mlife.setText(""+numberOfLife);
+          //  MainActivity.mlife.setText(""+numberOfLife);
 			gameOver();
 		}
 	}

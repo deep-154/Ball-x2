@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
@@ -30,7 +31,7 @@ public class MainActivity extends Activity{
     static MainActivity activity;
     int height,width;
 	AccelerometerData data = new AccelerometerData();
-    static TextView mlife,mScore;
+    static TextView noOflevel,scoreView;
     ImageButton pause,play;
 	
 	@Override
@@ -64,11 +65,35 @@ public class MainActivity extends Activity{
 		mediaPlayer.setLooping(true);
 		mediaPlayer.setVolume(50,50);
 		mediaPlayer.start();*/
-
+        Typeface custom_font = Typeface.createFromAsset(getAssets(),
+                "fonts/chewy.ttf");
 
 		Levels.pauseGame = true;
-        mlife = (TextView)findViewById(R.id.life);
         final RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.mainView);
+
+        noOflevel = new TextView(this);
+        noOflevel.setText(""+Levels.currentLevel);
+        noOflevel.setTypeface(custom_font);
+        noOflevel.setTextSize(65 * height / 1000);
+        RelativeLayout.LayoutParams paramsLevel = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        paramsLevel.leftMargin = 32 * width / 100;
+        paramsLevel.topMargin = 45*height / 1000;
+        relativeLayout.addView(noOflevel,paramsLevel);
+
+        scoreView = new TextView(this);
+        scoreView.setText("0");
+        scoreView.setTextColor(Color.WHITE);
+        scoreView.setTypeface(custom_font);
+        scoreView.setTextSize(65 * height / 1000);
+        RelativeLayout.LayoutParams paramsScore = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        paramsScore.leftMargin = 55 * width / 100;
+        paramsScore.topMargin = 45*height / 1000;
+        relativeLayout.addView(scoreView,paramsScore);
+
+
+
         pause = new ImageButton(this);
         pause.setBackgroundResource(R.drawable.pausebtnbackground);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
