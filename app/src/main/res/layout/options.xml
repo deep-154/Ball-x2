@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/options_dialog"
+    >
+
+
+    <RadioGroup android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal" android:layout_height="wrap_content"
+        android:layout_weight="1" android:id="@+id/radioGroup"
+        android:layout_marginTop="42dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginStart="44dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <RadioButton android:layout_width="wrap_content"
+            android:id="@+id/g_sensor" android:layout_height="wrap_content"
+            android:checked="true" android:text="G-SENSOR"
+            android:textSize="40sp" android:textColor="@android:color/black">
+
+            </RadioButton>
+        <RadioButton android:id="@+id/manual"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="MANUAL"
+            android:textSize="40sp"
+            android:layout_below="@+id/radioGroup"
+            android:layout_alignLeft="@+id/radioGroup"
+            android:layout_alignStart="@+id/radioGroup"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/black"></RadioButton>
+
+    </RadioGroup>
+
+
+
+</RelativeLayout>

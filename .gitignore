@@ -1,48 +1,39 @@
-# Taken from http://stackoverflow.com/questions/8476376/typical-gitignore-file-for-an-android-app
-
-#Android
-
-# built application files
-**/*.apk
-**/*.ap_
+#built application files
+*.apk
+*.ap_
 
 # files for the dex VM
-**/*.dex
+*.dex
 
 # Java class files
-**/*.class
+*.class
 
 # generated files
-**/bin/
-**/gen/
+bin/
+gen/
 
 # Local configuration file (sdk path, etc)
-**/local.properties
+local.properties
 
-##Eclipse
-**/*.pydevproject
-**/*.project
-**/*.metadata
-**/bin/**
-**/tmp/**
-**/tmp/**
-**/*.tmp
-**/*.bak
-**/*.swp
-**/*~.nib
-**/local.properties
-**/.classpath
-**/.settings/
-**/.loadpath
+# Windows thumbnail db
+Thumbs.db
 
-# External tool builders
-**/.externalToolBuilders/
+# OSX files
+.DS_Store
 
-# Locally stored "Eclipse launch configurations"
-**/*.launch
+# Eclipse project files
+.classpath
+.project
 
-# CDT-specific
-**/.cproject
-
-# PDT-specific
-**/.buildpath
+# Android Studio
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+.gradle
+build/
+/*/out
+/*/*/build
+/*/*/production
+*.iws
+*.ipr
+*~
+*.swp
