@@ -11,26 +11,33 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Your Score is" 
+        android:text="Y0UR SCORE IS"
         android:textColor="@android:color/black"
         android:textSize="25dp"/>
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/textView2"
         android:layout_marginTop="15dp"
-        android:layout_toLeftOf="@+id/textView1"
-        android:text="YES" />
+        android:layout_marginLeft="40dp"
+        android:text="YES"
+        android:textColor="@android:color/white"
+        android:background="@drawable/btn_ok"
+        android:textSize="30sp"/>
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:layout_alignBottom="@+id/button1"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="NO" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="40dp"
+        android:text="NO"
+        android:textColor="@android:color/white"
+        android:background="@drawable/btn_ok"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -40,6 +47,6 @@
         android:layout_centerHorizontal="true"
         android:text="0"
         android:textColor="@android:color/darker_gray"
-        android:textSize="30dp" />
+        android:textSize="40sp" />
 
 </RelativeLayout>
