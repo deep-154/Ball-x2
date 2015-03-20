@@ -60,7 +60,7 @@ public class Levels extends View {
 	ArrayList<PowerUp> gifts = new ArrayList<PowerUp>();
 	static int BASE_RADIUS;
 	double risingFactor = 0.1;
-	int counter = 0, shieldTimeCounter = 0;
+	int counter = 0, shieldTimeCounter = 0,freezeArrowCounter=200;
 	Paint paint;
 	Rect mainRect;
 
@@ -120,7 +120,7 @@ public class Levels extends View {
 			mainRect = new Rect(0, 0, getWidth(), getHeight());
 			currentLevel=1;
 			initializeGame();
-            if(SoundPoolManager.getInstance()==null) {
+            if(MainMenu.playMusic &&SoundPoolManager.getInstance()==null) {
                 initializeSounds();
             }
             pauseGame = false;
@@ -274,7 +274,6 @@ public class Levels extends View {
         sounds.add(R.raw.pop);
         sounds.add(R.raw.demo);
         sounds.add(R.raw.gift_taken);
-        sounds.add(R.raw.arrow_shoot);
         sounds.add(R.raw.death);
         SoundPoolManager.getInstance().setSounds(sounds);
         try {
@@ -305,6 +304,7 @@ public class Levels extends View {
 		}
 		if (shoot || otherShoot) {
             if(isShooting==0){
+                if(SoundPoolManager.getInstance()!=null)
                 SoundPoolManager.getInstance().playSound(R.raw.demo);
             }
 			isShooting = 1;
@@ -322,6 +322,12 @@ public class Levels extends View {
 					arrowY = gameAreaHeight;
 					isShooting = 0;
 				} else {
+                    freezeArrowCounter--;
+                    if(freezeArrowCounter<0){
+                        arrowY = gameAreaHeight;
+                        isShooting = 0;
+                        freezeArrowCounter=200;
+                    }
 					arrowY = 27 * gameAreaHeight / 100;
 				}
 
@@ -536,14 +542,14 @@ public class Levels extends View {
 	}
 
 	void renderingWall(Canvas c) {
-		mainRect.set((int) (52 * gameAreaWidth / 100),
+		mainRect.set((int) (47 * gameAreaWidth / 100),
 				(int) (27 * gameAreaHeight / 100),
-				(int) (58 * gameAreaWidth / 100), (int) (90*gameAreaHeight/100));
+				(int) (53 * gameAreaWidth / 100), (int) (90*gameAreaHeight/100));
 		c.drawBitmap(wall, null, mainRect, null);
 		if(balls.size()>1&&(radius.get(0)==6*BASE_RADIUS||radius.get(1)==6*BASE_RADIUS)){
-		mainRect.set((int) (52 * gameAreaWidth / 100),
+		mainRect.set((int) (47 * gameAreaWidth / 100),
 				(int) (90 * gameAreaHeight / 100),
-				(int) (58 * gameAreaWidth / 100), (int) (gameAreaHeight));
+				(int) (53 * gameAreaWidth / 100), (int) (gameAreaHeight));
 		paint.reset();
 		paint.setColor(Color.argb(200, 68, 68, 68));
 		c.drawRect(mainRect, paint);
@@ -626,7 +632,7 @@ public class Levels extends View {
 		for (int i = 0; i < balls.size(); i++) {
 			if (balls.get(i).ballHit == 1) {
 				score = score + 10;// incrementing scores
-
+                if(SoundPoolManager.getInstance()!=null)
                 SoundPoolManager.getInstance().playSound(R.raw.pop);
 				if(radius.get(i)>2*BASE_RADIUS){
 				radius.set(i, radius.get(i)-2*BASE_RADIUS);
@@ -672,6 +678,7 @@ public class Levels extends View {
 	void collisonManGift() {
 		for (int i = 0; i < gifts.size(); i++) {
 			if (gifts.get(i).giftTaken) {
+                if(SoundPoolManager.getInstance()!=null)
                 SoundPoolManager.getInstance().playSound(R.raw.gift_taken);
 				updatePowerUps(gifts.get(i).id);
 				gifts.remove(i);
@@ -682,7 +689,10 @@ public class Levels extends View {
 	private void settingDelay() {
 		// TODO Auto-generated method stub
 		counter++;
-        if(counter==1)SoundPoolManager.getInstance().playSound(R.raw.death);
+        if(counter==1){
+            if(SoundPoolManager.getInstance()!=null)
+            SoundPoolManager.getInstance().playSound(R.raw.death);
+        }
 		if (counter < 60) {
 			isHitTimerActive=true;
 		} else {
@@ -702,7 +712,6 @@ public class Levels extends View {
 			initializeGame();
 			updatePowerUps(8);
 		} else {
-          //  MainActivity.mlife.setText(""+numberOfLife);
 			gameOver();
 		}
 	}
@@ -792,6 +801,7 @@ public class Levels extends View {
 				generatedPowerUpId = 7;
 			break;
 		}
+        if(generatedPowerUpId==5) generatedPowerUpId = 6;
 		Bitmap gift = null;
 		switch (generatedPowerUpId) {
 		case 2:
@@ -880,11 +890,9 @@ public class Levels extends View {
 			Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
 					"fonts/chewy.ttf");
 			paint.setTypeface(tf);
-			c.drawText(message, 40 * gameAreaWidth / 100,
-					60 * gameAreaHeight / 100, paint);
+			c.drawText(message, 40 * gameAreaWidth / 100,60 * gameAreaHeight / 100, paint);
 			paint.reset();
 		}
-
 
 
 		invalidate(0,(int)(27*gameAreaHeight/100),(int)gameAreaWidth,getHeight());

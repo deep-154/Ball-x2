@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 public class MainMenu extends Activity {
 
-	MediaPlayer mediaPlayer;
+	static MediaPlayer mediaPlayer;
 	static int selectMethod = 1;
     static boolean playMusic = true;
    static MainMenu activity;
@@ -41,12 +41,6 @@ public class MainMenu extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_menu);
         activity = MainMenu.this;
-
-		mediaPlayer = MediaPlayer.create(this, R.raw.menu_music);
-		mediaPlayer.setLooping(true);
-		mediaPlayer.setVolume(50, 50);
-		mediaPlayer.start();
-
 		// -----------------------------------------------------------------------------------------------------
 	/*	DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -75,6 +69,26 @@ public class MainMenu extends Activity {
 	}
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("resume called",""+playMusic);
+        mediaPlayer = MediaPlayer.create(this, R.raw.menu_music);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(50, 50);
+
+        if(playMusic) {
+            mediaPlayer.start();
+        }else if(!playMusic){
+            if(mediaPlayer!=null){
+                mediaPlayer.release();
+            }
+            mediaPlayer =null;
+        }
+
+
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
@@ -90,14 +104,13 @@ public class MainMenu extends Activity {
     }
 	
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
+		super.onStop();
 		if (mediaPlayer != null) {
+            if(playMusic)
 			mediaPlayer.stop();
-			if (isFinishing()) {
-				mediaPlayer.stop();
-				mediaPlayer.release();
-			}
+			mediaPlayer.release();
+            mediaPlayer = null;
 		}
 	}
 
@@ -216,18 +229,24 @@ class mainMenuView extends View{
         control.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                Log.e("hsdbcjsdnc" ,""+i);
+
                 switch(i){
                     case R.id.g_sensor:
                         MainMenu.selectMethod=1;
+                        break;
                     case R.id.manual:
                         MainMenu.selectMethod=2;
+                        break;
                 }
             }
         } );
 
        final ImageButton sound = new ImageButton(getContext());
-        sound.setImageResource(R.drawable.bt_nmuted);
+        if(MainMenu.playMusic){
+            sound.setImageResource(R.drawable.bt_nmuted);
+        }else{
+            sound.setImageResource(R.drawable.bt_muted);
+        }
         sound.setBackgroundColor(Color.TRANSPARENT);
         RelativeLayout.LayoutParams paramsSound = new RelativeLayout.LayoutParams(
                 22*getHeight()/100, 22*getHeight()/100);
@@ -239,10 +258,19 @@ class mainMenuView extends View{
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                sound.setImageResource(R.drawable.bt_muted);
+                if(MainMenu.playMusic){
+                    MainMenu.playMusic = false;
+                   MainMenu.mediaPlayer.pause();
+                    sound.setImageResource(R.drawable.bt_muted);
+                }else{
+                    MainMenu.playMusic = true;
+                    MainMenu.mediaPlayer.start();
+                    sound.setImageResource(R.drawable.bt_nmuted);
+                }
+
+
             }
         });
-
 
 
         d.show();
