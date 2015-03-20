@@ -14,6 +14,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -27,11 +29,7 @@ import android.widget.TextView;
 
 public class MainMenu extends Activity {
 
-	TextView tv;
-	int height, width;
 	MediaPlayer mediaPlayer;
-	RadioButton controlManual, controlSensor;
-
 	static int selectMethod = 1;
     static boolean playMusic = true;
    static MainMenu activity;
@@ -50,29 +48,12 @@ public class MainMenu extends Activity {
 		mediaPlayer.start();
 
 		// -----------------------------------------------------------------------------------------------------
-		DisplayMetrics displaymetrics = new DisplayMetrics();
+	/*	DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 		height = displaymetrics.heightPixels;
-		width = displaymetrics.widthPixels;
+		width = displaymetrics.widthPixels;*/
 
-		tv = (TextView)findViewById(R.id.heading);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),
-                "fonts/chewy.ttf");
-        tv.setTypeface(custom_font);
-
-
-
-
-
-		/*options.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-
-			}
-		});
+		/*
 		help.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -161,17 +142,17 @@ class mainMenuView extends View{
         canvas.drawColor(Color.TRANSPARENT);
 
         if(mainRect.contains((int)x,(int)y)){
-            mainRect.set(21*getWidth()/100,62*getHeight()/100,42*getWidth()/100,71*getHeight()/100);
+            mainRect.set(21*getWidth()/100,62*getHeight()/100,42*getWidth()/100,74*getHeight()/100);
         }else{
-           mainRect.set(18*getWidth()/100,60*getHeight()/100,45*getWidth()/100,73*getHeight()/100);
+           mainRect.set(18*getWidth()/100,60*getHeight()/100,45*getWidth()/100,76*getHeight()/100);
         }
         canvas.drawBitmap(play,null,mainRect,null);
 
 
         if(mainRect2.contains((int)x,(int)y)){
-            mainRect2.set(58*getWidth()/100,62*getHeight()/100,79*getWidth()/100,71*getHeight()/100);
+            mainRect2.set(58*getWidth()/100,62*getHeight()/100,79*getWidth()/100,74*getHeight()/100);
         }else{
-            mainRect2.set(55*getWidth()/100,60*getHeight()/100,82*getWidth()/100,73*getHeight()/100);
+            mainRect2.set(55*getWidth()/100,60*getHeight()/100,82*getWidth()/100,76*getHeight()/100);
         }
         canvas.drawBitmap(settings,null,mainRect2,null);
         if((mainRect.contains((int)x1,(int)y1))){
@@ -181,14 +162,39 @@ class mainMenuView extends View{
         }
 
         if((mainRect2.contains((int)x1,(int)y1))){
-            d = new Dialog(MainMenu.activity);
-            d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            d.setContentView(R.layout.options);
-            d.setCanceledOnTouchOutside(false);
-            d.getWindow().setLayout(65 * getWidth() / 100, 90 * getHeight() / 100);
-            Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),
-                    "fonts/chewy.ttf");
-           /* ok = (Button) d.findViewById(R.id.ok);
+            showDialog();
+            x1 = -1;
+            y1 = -1;
+        }
+
+
+        invalidate();
+
+
+    }
+
+    public void showDialog(){
+        d = new Dialog(MainMenu.activity);
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                66 * getWidth() / 100, 90 * getHeight() / 100);
+        d.addContentView(LayoutInflater.from(getContext()).inflate(R.layout.options, null),params);
+        d.setCanceledOnTouchOutside(false);
+        d.getWindow().setLayout(65 * getWidth() / 100, 90 * getHeight() / 100);
+        RelativeLayout relativeLayout = (RelativeLayout)d.findViewById(R.id.optionsLayout);
+
+        Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/chewy.ttf");
+            Button ok  = new Button(getContext());
+            ok.setText("OK");
+            ok.setTextSize(getHeight()/40);
+            ok.setBackgroundResource(R.drawable.btn_ok);
+            ok.setTextColor(Color.WHITE);
+            RelativeLayout.LayoutParams paramsOptions = new RelativeLayout.LayoutParams(
+                    (66 * getWidth()/ 1000)*4, 12*getHeight()/100);
+            paramsOptions.leftMargin = 8*getWidth()/100;
+            paramsOptions.topMargin = 62*getHeight()/100;
+            relativeLayout.addView(ok,paramsOptions);
             ok.setTypeface(custom_font);
             ok.setOnClickListener(new View.OnClickListener() {
 
@@ -198,35 +204,48 @@ class mainMenuView extends View{
                     d.cancel();
                 }
             });
-            */
-           RadioButton controlManual = (RadioButton) d.findViewById(R.id.g_sensor);
-            controlManual.setTypeface(custom_font);
-            RadioButton controlSensor = (RadioButton) d.findViewById(R.id.manual);
-            controlSensor.setTypeface(custom_font);
+
+        RadioButton controlManual = (RadioButton) d.findViewById(R.id.g_sensor);
+        controlManual.setTypeface(custom_font);
+        RadioButton controlSensor = (RadioButton) d.findViewById(R.id.manual);
+        controlSensor.setTypeface(custom_font);
 
 
-            MainMenu.selectMethod=1;
-            RadioGroup control= (RadioGroup)d.findViewById(R.id.radioGroup);
-            control.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                    switch(i){
-                        case R.id.g_sensor:
-                            MainMenu.selectMethod=1;
-                        case R.id.manual:
-                            MainMenu.selectMethod=2;
-                    }
+        MainMenu.selectMethod=1;
+        RadioGroup control= (RadioGroup)d.findViewById(R.id.radioGroup);
+        control.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                Log.e("hsdbcjsdnc" ,""+i);
+                switch(i){
+                    case R.id.g_sensor:
+                        MainMenu.selectMethod=1;
+                    case R.id.manual:
+                        MainMenu.selectMethod=2;
                 }
-            } );
+            }
+        } );
+
+       final ImageButton sound = new ImageButton(getContext());
+        sound.setImageResource(R.drawable.bt_nmuted);
+        sound.setBackgroundColor(Color.TRANSPARENT);
+        RelativeLayout.LayoutParams paramsSound = new RelativeLayout.LayoutParams(
+                22*getHeight()/100, 22*getHeight()/100);
+        paramsSound.leftMargin = 46*getWidth()/100;
+        paramsSound.topMargin = 58*getHeight()/100;
+        relativeLayout.addView(sound,paramsSound);
+        sound.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                sound.setImageResource(R.drawable.bt_muted);
+            }
+        });
 
 
-            d.show();
-            x1 = -1;
-            y1 = -1;
-        }
 
-
-        invalidate();
+        d.show();
 
 
     }

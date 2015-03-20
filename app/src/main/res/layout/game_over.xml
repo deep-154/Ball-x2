@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="180dp" 
-    android:background="@drawable/menu">
+    android:background="@drawable/options_dialog">
 
     <TextView
         android:id="@+id/textView1"
