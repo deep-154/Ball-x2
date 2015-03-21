@@ -77,7 +77,7 @@ public class MainActivity extends Activity{
         noOflevel.setTypeface(custom_font);
         noOflevel.setTextSize(65 * height / 1000);
         RelativeLayout.LayoutParams paramsLevel = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.WRAP_CONTENT,18 * height / 100);
         paramsLevel.leftMargin = 32 * width / 100;
         paramsLevel.topMargin = 45*height / 1000;
         relativeLayout.addView(noOflevel,paramsLevel);
@@ -88,7 +88,7 @@ public class MainActivity extends Activity{
         scoreView.setTypeface(custom_font);
         scoreView.setTextSize(65 * height / 1000);
         RelativeLayout.LayoutParams paramsScore = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.WRAP_CONTENT, 18 * height / 100);
         paramsScore.leftMargin = 55 * width / 100;
         paramsScore.topMargin = 45*height / 1000;
         relativeLayout.addView(scoreView,paramsScore);

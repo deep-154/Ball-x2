@@ -42,7 +42,7 @@ public class Ball {
 				velocityX = -velocityX;
 			}
 			if(Levels.currentLevel==5){
-			if(((ballX>52*W/100-radius)&&ballX<58*W/100)||((ballX<58*W/100)&&ballX>52*W/100)){
+			if(((ballX>47*W/100-radius)&&ballX<53*W/100)||((ballX<53*W/100)&&ballX>47*W/100)){
 				velocityX = -velocityX;
 			}
 			}

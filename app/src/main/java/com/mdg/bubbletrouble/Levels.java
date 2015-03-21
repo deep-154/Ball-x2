@@ -19,6 +19,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -49,10 +50,11 @@ public class Levels extends View {
 	int[] touchX = new int[2];
 	int[] touchY = new int[2];
 	static boolean pauseGame = false,isHitTimerActive=false;
+    boolean isHit = false;
 	int maxTime = 0;
 	int time = 0;
     int numberOfLife = 5;
-	String message = null;
+	String message = "";
     int score = 0;
 	// Initializing list to store balls and their radius
 	ArrayList<Ball> balls = new ArrayList<Ball>();
@@ -60,9 +62,10 @@ public class Levels extends View {
 	ArrayList<PowerUp> gifts = new ArrayList<PowerUp>();
 	static int BASE_RADIUS;
 	double risingFactor = 0.1;
-	int counter = 0, shieldTimeCounter = 0,freezeArrowCounter=200;
+	int shieldTimeCounter = 0,freezeArrowCounter=200,gameEndTimer=80;
 	Paint paint;
 	Rect mainRect;
+    long Timer,timePassed;
 
 
 	public Levels(Context context, AttributeSet attributeSet) {
@@ -217,10 +220,11 @@ public class Levels extends View {
 				balls.add(c);
 				radius.add(4*BASE_RADIUS);
 			}
+
 			Ball b = new Ball((int) (initialBallX +22*gameAreaWidth/100),
 					(int) (initialBallY-gameAreaHeight / 20), risingFactor,velocityX);
 			balls.add(b);
-			radius.add(6*BASE_RADIUS);
+			radius.add(2*BASE_RADIUS);
 			break;
 		}
 
@@ -394,7 +398,7 @@ public class Levels extends View {
 		}
 		if(currentLevel==5){
 			if(balls.size()>1&&(radius.get(0)==6*BASE_RADIUS||radius.get(1)==6*BASE_RADIUS)){
-			if(manX>52*gameAreaWidth/100- gameAreaWidth / 20)manX=52*gameAreaWidth/100- gameAreaWidth / 20;
+			if(manX>47*gameAreaWidth/100- gameAreaWidth / 20)manX=47*gameAreaWidth/100- gameAreaWidth / 20;
 			}
 		}
 
@@ -559,7 +563,7 @@ public class Levels extends View {
 	void renderingTimer(Canvas c) {
 		if (time < 0) {
 			message = "Time Up";
-			settingDelay();
+			isHit=true; isHitTimerActive = true;
 		}
 		paint.setColor(Color.rgb(25,27,40));
 		paint.setStyle(Style.STROKE);
@@ -669,7 +673,8 @@ public class Levels extends View {
 			if (balls.get(i).manballCollison) {
 				// life will be lost
 				message = "You Got Hit";
-				settingDelay();
+				isHit = true;
+                isHitTimerActive = true;
    			}
 
 		}
@@ -686,23 +691,10 @@ public class Levels extends View {
 		}
 	}
 
-	private void settingDelay() {
-		// TODO Auto-generated method stub
-		counter++;
-        if(counter==1){
-            if(SoundPoolManager.getInstance()!=null)
-            SoundPoolManager.getInstance().playSound(R.raw.death);
-        }
-		if (counter < 60) {
-			isHitTimerActive=true;
-		} else {
-            isHitTimerActive=false;
-			lifeLost();
-			counter = 0;
-		}
-	}
+
 
 	public void lifeLost() {
+
 		numberOfLife--;
 		balls.clear();
 		radius.clear();
@@ -720,6 +712,7 @@ public class Levels extends View {
 		pauseGame = true;
 		final Dialog popUp = new Dialog(MainActivity.activity);
 		popUp.setTitle("PLAY AGAIN");
+        popUp.getWindow().setGravity(Gravity.CENTER);
 		popUp.setContentView(R.layout.game_over);
 		Button yes = (Button) popUp.findViewById(R.id.button1);
 		Button no = (Button) popUp.findViewById(R.id.button2);
@@ -816,10 +809,7 @@ public class Levels extends View {
 			gift = BitmapFactory.decodeResource(getResources(),
 					R.drawable.gift_armor);
 			break;
-		case 5:
-			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_laser);
-			break;
+		
 		case 6:
 			gift = BitmapFactory.decodeResource(getResources(),
 					R.drawable.gift_tornado);
@@ -864,18 +854,22 @@ public class Levels extends View {
 
 		if (!pauseGame&&!isHitTimerActive) {
 			updateGame();
+            detectCollison();
 		}
 
-        if(!pauseGame) {
-            detectCollison();
-        }
+
         renderGame(c);
 
 		if (numberOfLife > 0 && currentLevel < 8) {
 			if (balls.isEmpty()) {
 				gifts.clear();
-				if(currentLevel==7){
-					//think soon
+				if(currentLevel>=7){
+					gameEndTimer--;
+                    message = "YOU WON";
+                    if(gameEndTimer<0){
+                        gameOver();
+                        gameEndTimer=1000;
+                    }
 				}else{
 				currentLevel++;
 				initializeGame();
@@ -884,7 +878,23 @@ public class Levels extends View {
 			}
 		}
 		
-        if (isHitTimerActive) {
+        if (isHitTimerActive ||(gameEndTimer>0&&gameEndTimer<80)) {
+
+            if(isHit){
+                  Timer =System.currentTimeMillis();
+                  isHit = false;
+                if(SoundPoolManager.getInstance()!=null)
+                    SoundPoolManager.getInstance().playSound(R.raw.death);
+            }
+
+             timePassed =timePassed+System.currentTimeMillis()-Timer;
+            Timer =System.currentTimeMillis();
+            if(timePassed>1500){
+                isHitTimerActive = false;
+                timePassed=0;
+                lifeLost();
+            }
+
 			paint.setColor(Color.BLACK);
 			paint.setTextSize((float) (1.1 * gameAreaHeight / 9));
 			Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
@@ -892,6 +902,7 @@ public class Levels extends View {
 			paint.setTypeface(tf);
 			c.drawText(message, 40 * gameAreaWidth / 100,60 * gameAreaHeight / 100, paint);
 			paint.reset();
+
 		}
 
 

@@ -12,7 +12,7 @@
     <view
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        class="com.mdg.bubbletrouble.mainMenuView"
+        class="com.mdg.bubbletrouble.MainMenuView"
         android:id="@+id/view2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
