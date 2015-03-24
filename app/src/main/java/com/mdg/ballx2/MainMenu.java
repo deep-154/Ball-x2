@@ -1,31 +1,11 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class MainMenu extends Activity {
 
@@ -33,6 +13,7 @@ public class MainMenu extends Activity {
 	static int selectMethod = 1;
     static boolean playMusic = true;
    static MainMenu activity;
+
 
 	
 	@Override
@@ -46,32 +27,11 @@ public class MainMenu extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 		height = displaymetrics.heightPixels;
 		width = displaymetrics.widthPixels;*/
-
-		/*
-		help.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-				Dialog e = new Dialog(MainMenu.this);
-				e.setTitle("Help");
-				TextView tv = new TextView(MainMenu.this);
-				tv.setText("Aim of Game is to shoot the Bubbles from Gun. Also Avoid the bubbles from Hitting you.ENJOY!!");
-				tv.setBackgroundColor(Color.DKGRAY);
-				e.setContentView(tv);
-				e.show();
-
-			}
-		});
-*/
-
 	}
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("resume called",""+playMusic);
         mediaPlayer = MediaPlayer.create(this, R.raw.menu_music);
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(50, 50);

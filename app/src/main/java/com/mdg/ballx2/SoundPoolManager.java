@@ -1,12 +1,12 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
 import android.app.Activity;
 import android.media.AudioManager;
 import android.media.SoundPool;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 
 public class SoundPoolManager {

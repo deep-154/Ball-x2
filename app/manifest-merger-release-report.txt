@@ -7,6 +7,8 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 	android:versionName
 		ADDED from AndroidManifest.xml:5:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
 	android:versionCode
 		ADDED from AndroidManifest.xml:4:5
 		INJECTED from AndroidManifest.xml:0:0
@@ -15,7 +17,8 @@ ADDED from AndroidManifest.xml:2:1
 		ADDED from AndroidManifest.xml:2:11
 uses-sdk
 ADDED from AndroidManifest.xml:7:5
-MERGED from com.android.support:support-v4:20.0.0:16:5
+MERGED from com.android.support:appcompat-v7:21.0.3:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:9:9
 		INJECTED from AndroidManifest.xml:0:0
@@ -30,7 +33,8 @@ ADDED from AndroidManifest.xml:10:5
 		ADDED from AndroidManifest.xml:11:9
 application
 ADDED from AndroidManifest.xml:14:5
-MERGED from com.android.support:support-v4:20.0.0:17:5
+MERGED from com.android.support:appcompat-v7:21.0.3:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
 	android:label
 		ADDED from AndroidManifest.xml:17:9
 	android:hardwareAccelerated
@@ -43,7 +47,7 @@ MERGED from com.android.support:support-v4:20.0.0:17:5
 		ADDED from AndroidManifest.xml:20:9
 	android:theme
 		ADDED from AndroidManifest.xml:18:9
-activity#com.mdg.bubbletrouble.MainActivity
+activity#com.mdg.ballx2.MainActivity
 ADDED from AndroidManifest.xml:21:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:24:13
@@ -59,9 +63,9 @@ ADDED from AndroidManifest.xml:21:9
 		ADDED from AndroidManifest.xml:26:13
 	android:name
 		ADDED from AndroidManifest.xml:22:13
-intent-filter#android.intent.category.DEFAULT+com.mdg.bubbletrouble.MAINACTIVITY
+intent-filter#android.intent.category.DEFAULT+com.mdg.ballx2.MAINACTIVITY
 ADDED from AndroidManifest.xml:29:13
-action#com.mdg.bubbletrouble.MAINACTIVITY
+action#com.mdg.ballx2.MAINACTIVITY
 ADDED from AndroidManifest.xml:30:17
 	android:name
 		ADDED from AndroidManifest.xml:30:25
@@ -69,7 +73,7 @@ category#android.intent.category.DEFAULT
 ADDED from AndroidManifest.xml:32:17
 	android:name
 		ADDED from AndroidManifest.xml:32:27
-activity#com.mdg.bubbletrouble.MainMenu
+activity#com.mdg.ballx2.MainMenu
 ADDED from AndroidManifest.xml:36:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:39:13

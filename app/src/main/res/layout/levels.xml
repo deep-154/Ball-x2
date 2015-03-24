@@ -7,16 +7,76 @@
 
 
 
-    <view
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        class="com.mdg.bubbletrouble.Levels"
-        android:id="@+id/view"
+        <view
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            class="com.mdg.ballx2.Levels"
+            android:id="@+id/view"
+            android:layout_alignParentTop="true"
+            android:layerType="hardware"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LEVEL 1"
+        android:id="@+id/levelTitle"
         android:layout_alignParentTop="true"
-        android:layerType="hardware"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="44dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="13dp"
+        android:textSize="50sp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/relativeLayout"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/score"
+        android:textColor="@android:color/white"
+        android:textSize="45sp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_alignBottom="@+id/levelTitle"
+        android:layout_toRightOf="@+id/relativeLayout"
+        android:layout_toEndOf="@+id/relativeLayout"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="64dp"
+        android:layout_height="62dp"
+        android:text="1"
+        android:id="@+id/lifeView"
+        android:background="@drawable/life_button"
+        android:layout_marginRight="120dp"
+        android:layout_marginEnd="120dp"
+        android:textColor="@android:color/white"
+        android:textSize="45sp"
+        android:gravity="center"
+        android:layout_alignTop="@+id/score"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-
+    <ImageButton
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/play"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:src="@drawable/playbtnbackground"
+        android:scaleType="fitXY"
+        android:background="@null"
+        />
 
 </RelativeLayout>

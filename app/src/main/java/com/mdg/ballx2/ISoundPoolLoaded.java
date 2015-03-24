@@ -1,4 +1,4 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
 /**
  * Created by DEEPANKAR on 18-02-2015.

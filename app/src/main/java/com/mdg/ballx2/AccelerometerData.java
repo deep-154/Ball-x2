@@ -1,4 +1,4 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
 import android.app.Activity;
 import android.hardware.Sensor;

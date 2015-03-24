@@ -1,22 +1,21 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
-
-import android.util.Log;
 
 public class Ball {
 
 	float H = Levels.gameAreaHeight, W = Levels.gameAreaWidth;
 	public float ballX = -1;
 	public float ballY = -1;
+    float unit = H/700;
 	float velocityX = 0;
 	float velocityY = 0;
-	float gravity = (float) 0.2;
+	float gravity = (float) 0.2*unit;
 	float arrowX, arrowY, manX, manY = 9*H/10;
 	int ballHit = 0;
 	boolean manballCollison= false;
 	int BASE_RADIUS = Levels.BASE_RADIUS;
 	float arrowWidth,arrowHeight;
-    float unit = H/700;
+
     
 	
 	public Ball(int a, int b,double c,float d) {

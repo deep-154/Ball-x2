@@ -1,8 +1,5 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -17,14 +14,20 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Levels extends View {
 
@@ -75,12 +78,12 @@ public class Levels extends View {
 		player = BitmapFactory.decodeResource(getResources(), R.drawable.player_idle);
         playerMove = BitmapFactory.decodeResource(getResources(), R.drawable.player_move);
 		arrow = BitmapFactory.decodeResource(getResources(),
-				R.drawable.bullet_simple);
+                R.drawable.bullet_simple);
 		directionArrowLeft = BitmapFactory.decodeResource(getResources(),
-				R.drawable.arrow_left);
+                R.drawable.arrow_left);
 		directionArrowRight = BitmapFactory.decodeResource(getResources(),
-				R.drawable.arrow_right);
-		 wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);			
+                R.drawable.arrow_right);
+		 wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		sourceRect = new Rect(0, 0, playerMove.getWidth() / 4, playerMove.getHeight()/2);
         ballDrawable = new ShapeDrawable(new OvalShape());
 		framePeriod = 120;
@@ -115,7 +118,8 @@ public class Levels extends View {
 		return true;
 	}
 
-	@Override
+
+    @Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		// TODO Auto-generated method stub
 		super.onSizeChanged(w, h, oldw, oldh);
@@ -210,12 +214,12 @@ public class Levels extends View {
 		case 7:
 			
 			for(int i =0;i<3;i++){
-				displacement = (int) (6*gameAreaWidth/100);
-				Ball b = new Ball((int) (initialBallX +3*gameAreaWidth/200+ i*displacement),
+				displacement = (int) (65*gameAreaWidth/1000);
+				Ball b = new Ball((int) (5*gameAreaWidth/200+ i*displacement),
 						(int) (initialBallY+gameAreaHeight / 12), risingFactor,0);
 				balls.add(b);
 				radius.add(4*BASE_RADIUS);
-				Ball c = new Ball((int) (gameAreaWidth-4*BASE_RADIUS -3*gameAreaWidth/200- i*displacement),
+				Ball c = new Ball((int) (gameAreaWidth-4*BASE_RADIUS -5*gameAreaWidth/200- i*displacement),
 						(int) (initialBallY+gameAreaHeight / 12), risingFactor,0);
 				balls.add(c);
 				radius.add(4*BASE_RADIUS);
@@ -224,7 +228,7 @@ public class Levels extends View {
 			Ball b = new Ball((int) (initialBallX +22*gameAreaWidth/100),
 					(int) (initialBallY-gameAreaHeight / 20), risingFactor,velocityX);
 			balls.add(b);
-			radius.add(2*BASE_RADIUS);
+			radius.add(8*BASE_RADIUS);
 			break;
 		}
 
@@ -232,14 +236,14 @@ public class Levels extends View {
 
 	void initializeGamePanelArena() {
 
-        MainActivity.noOflevel.setText(""+currentLevel);
+        MainActivity.noOflevel.setText("LEVEL "+currentLevel);
 		gameAreaHeight = 98 * getHeight() / 100;
 		gameAreaWidth = getWidth();
 		BASE_RADIUS = (int) (gameAreaHeight / 48);
 		powerUpShield = false;
 		manX = 52 * gameAreaWidth / 100;
 		if(currentLevel==5){
-			manX = 32*gameAreaWidth / 100;
+			manX = 30*gameAreaWidth / 100;
 		}
 
 	}
@@ -317,9 +321,9 @@ public class Levels extends View {
 		}
 		if (isShooting == 1) {
 			if (powerUpArrow) {
-				arrowY = arrowY - 5;
+				arrowY = arrowY - 5*(gameAreaHeight/700);
 			} else if (powerUpTornado) {
-				arrowY = arrowY - 10;
+				arrowY = arrowY - 10*(gameAreaHeight/700);
 			}
 			if (arrowY < 27 * gameAreaHeight / 100) {
 				if (!powerUpSpike) {
@@ -444,7 +448,7 @@ public class Levels extends View {
 			powerUpArrow = false;
 			powerUpSpike = false;
 			arrow = BitmapFactory.decodeResource(getResources(),
-					R.drawable.bullet_tornado);
+                    R.drawable.bullet_tornado);
 			break;
 		case 7:
 			powerUpSpike = true;
@@ -456,7 +460,7 @@ public class Levels extends View {
 			powerUpArrow = true;
 			powerUpSpike = false;
 			arrow = BitmapFactory.decodeResource(getResources(),
-					R.drawable.bullet_simple);
+                    R.drawable.bullet_simple);
 			break;
 		case 9:
 			score = score + 30;
@@ -483,11 +487,11 @@ public class Levels extends View {
 		if (powerUpSpike) {
 			if (arrowY <= 27 * gameAreaHeight / 100) {
 				arrow = BitmapFactory.decodeResource(getResources(),
-						R.drawable.bullet_spike);
+                        R.drawable.bullet_spike);
 				
 			}else if(arrowY >= gameAreaHeight){
 				arrow = BitmapFactory.decodeResource(getResources(),
-						R.drawable.bullet_simple);
+                        R.drawable.bullet_simple);
 			}
 		}
 		float bottom = arrowY + arrow.getHeight();
@@ -565,7 +569,7 @@ public class Levels extends View {
 			message = "Time Up";
 			isHit=true; isHitTimerActive = true;
 		}
-		paint.setColor(Color.rgb(25,27,40));
+		paint.setColor(Color.rgb(25, 27, 40));
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(2*gameAreaHeight / 100);
         float length=0;
@@ -574,8 +578,6 @@ public class Levels extends View {
         c.drawRect(mainRect,paint);
 		paint.reset();
 	}
-
-
 
 	void renderingNavigationArrows(Canvas c) {
 		if (MainMenu.selectMethod == 2) { // when Manual method is selected
@@ -611,7 +613,7 @@ public class Levels extends View {
 	void renderPowerUps(Canvas c) {
 		if (powerUpShield) {
 			Bitmap shield = BitmapFactory.decodeResource(getResources(),
-					R.drawable.armor);
+                    R.drawable.armor);
 			mainRect.set((int) manX, (int) manY,
 					(int) (manX + gameAreaWidth / 20),
 					(int) (manY + gameAreaHeight / 10));
@@ -711,20 +713,28 @@ public class Levels extends View {
 	public void gameOver() {
 		pauseGame = true;
 		final Dialog popUp = new Dialog(MainActivity.activity);
-		popUp.setTitle("PLAY AGAIN");
+		popUp.requestWindowFeature(Window.FEATURE_NO_TITLE);
         popUp.getWindow().setGravity(Gravity.CENTER);
 		popUp.setContentView(R.layout.game_over);
-		Button yes = (Button) popUp.findViewById(R.id.button1);
-		Button no = (Button) popUp.findViewById(R.id.button2);
+        popUp.getWindow().setLayout(7*getWidth()/10,9*getHeight()/10);
+        Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/chewy.ttf");
+		Button yes = (Button) popUp.findViewById(R.id.yes);
+        yes.setTypeface(tf);
+		Button no = (Button) popUp.findViewById(R.id.no);
+        no.setTypeface(tf);
 		TextView dis = (TextView) popUp.findViewById(R.id.textView2);
+        TextView ques = (TextView) popUp.findViewById(R.id.textView);
+        TextView title = (TextView) popUp.findViewById(R.id.textView1);
+        title.setTypeface(tf);
+        ques.setTypeface(tf);
 		dis.setText("" + score);
 		yes.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(getContext(), MainActivity.class);
-				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 try{
                     ((Activity)getContext()).finish();
                 }catch(ClassCastException e){
@@ -799,40 +809,40 @@ public class Levels extends View {
 		switch (generatedPowerUpId) {
 		case 2:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_life);
+                    R.drawable.gift_life);
 			break;
 		case 3:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_time);
+                    R.drawable.gift_time);
 			break;
 		case 4:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_armor);
+                    R.drawable.gift_armor);
 			break;
-		
+
 		case 6:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_tornado);
+                    R.drawable.gift_tornado);
 			break;
 		case 7:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_spike);
+                    R.drawable.gift_spike);
 			break;
 		case 8:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_arrow);
+                    R.drawable.gift_arrow);
 			break;
 		case 9:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_coin);
+                    R.drawable.gift_coin);
 			break;
 		case 10:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_coins);
+                    R.drawable.gift_coins);
 			break;
 		case 11:
 			gift = BitmapFactory.decodeResource(getResources(),
-					R.drawable.gift_dollar);
+                    R.drawable.gift_dollar);
 			break;
 		}
 
@@ -881,24 +891,25 @@ public class Levels extends View {
         if (isHitTimerActive ||(gameEndTimer>0&&gameEndTimer<80)) {
 
             if(isHit){
-                  Timer =System.currentTimeMillis();
+                  Timer = System.currentTimeMillis();
                   isHit = false;
                 if(SoundPoolManager.getInstance()!=null)
                     SoundPoolManager.getInstance().playSound(R.raw.death);
             }
-
-             timePassed =timePassed+System.currentTimeMillis()-Timer;
-            Timer =System.currentTimeMillis();
-            if(timePassed>1500){
-                isHitTimerActive = false;
-                timePassed=0;
-                lifeLost();
-            }
+             if(isHitTimerActive) {
+                 timePassed = timePassed + System.currentTimeMillis() - Timer;
+                 Timer = System.currentTimeMillis();
+                 if (timePassed > 1500) {
+                     isHitTimerActive = false;
+                     timePassed = 0;
+                     lifeLost();
+                 }
+             }
 
 			paint.setColor(Color.BLACK);
 			paint.setTextSize((float) (1.1 * gameAreaHeight / 9));
 			Typeface tf = Typeface.createFromAsset(getContext().getAssets(),
-					"fonts/chewy.ttf");
+                    "fonts/chewy.ttf");
 			paint.setTypeface(tf);
 			c.drawText(message, 40 * gameAreaWidth / 100,60 * gameAreaHeight / 100, paint);
 			paint.reset();
@@ -906,9 +917,14 @@ public class Levels extends View {
 		}
 
 
-		invalidate(0,(int)(27*gameAreaHeight/100),(int)gameAreaWidth,getHeight());
+		invalidate(0, (int) (27 * gameAreaHeight / 100), (int) gameAreaWidth, getHeight());
 	}
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
 
 
+
+    }
 }

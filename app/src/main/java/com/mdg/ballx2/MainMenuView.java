@@ -1,4 +1,4 @@
-package com.mdg.bubbletrouble;
+package com.mdg.ballx2;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -10,19 +10,18 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
-/**
- * Created by DEEPANKAR on 21-03-2015.
- */
 public class MainMenuView extends View {
 
     Bitmap play,settings;
@@ -74,7 +73,7 @@ public class MainMenuView extends View {
         }
         canvas.drawBitmap(settings,null,mainRect2,null);
         if((mainRect.contains((int)x1,(int)y1))){
-            Intent i = new Intent("com.mdg.bubbletrouble.MAINACTIVITY");
+            Intent i = new Intent("com.mdg.ballx2.MAINACTIVITY");
             getContext().startActivity(i);
             x1=-1;y1 = -1;
         }
@@ -86,7 +85,7 @@ public class MainMenuView extends View {
         }
 
 
-        invalidate();
+        invalidate(15*getWidth()/100,getHeight()/2,85*getWidth()/100,80*getHeight()/100);
 
 
     }
@@ -103,16 +102,7 @@ public class MainMenuView extends View {
 
         Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),
                 "fonts/chewy.ttf");
-        Button ok  = new Button(getContext());
-        ok.setText("OK");
-        ok.setTextSize(getHeight()/40);
-        ok.setBackgroundResource(R.drawable.btn_ok);
-        ok.setTextColor(Color.WHITE);
-        RelativeLayout.LayoutParams paramsOptions = new RelativeLayout.LayoutParams(
-                (66 * getWidth()/ 1000)*4, 12*getHeight()/100);
-        paramsOptions.leftMargin = 8*getWidth()/100;
-        paramsOptions.topMargin = 62*getHeight()/100;
-        relativeLayout.addView(ok,paramsOptions);
+        Button ok  = (Button)d.findViewById(R.id.ok);
         ok.setTypeface(custom_font);
         ok.setOnClickListener(new View.OnClickListener() {
 
@@ -176,10 +166,15 @@ public class MainMenuView extends View {
 
             }
         });
-
-
+        d.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         d.show();
-
+        //Set the dialog to immersive
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            d.getWindow().getDecorView().setSystemUiVisibility(
+                    MainMenu.activity.getWindow().getDecorView().getSystemUiVisibility());
+        }
+        //Clear the not focusable flag from the window
+        d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
     }
 }
