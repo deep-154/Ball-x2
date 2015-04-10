@@ -1,9 +1,11 @@
 package com.mdg.ballx2;
 
 
+import com.mdg.ballx2.Levels.BaseLevel;
+
 public class Ball {
 
-	float H = Levels.gameAreaHeight, W = Levels.gameAreaWidth;
+	float H = BaseLevel.gameAreaHeight, W = BaseLevel.gameAreaWidth;
 	public float ballX = -1;
 	public float ballY = -1;
     float unit = H/700;
@@ -11,9 +13,9 @@ public class Ball {
 	float velocityY = 0;
 	float gravity = (float) 0.2*unit;
 	float arrowX, arrowY, manX, manY = 9*H/10;
-	int ballHit = 0;
-	boolean manballCollison= false;
-	int BASE_RADIUS = Levels.BASE_RADIUS;
+	public int ballHit = 0;
+	public boolean manballCollison= false;
+	int BASE_RADIUS = BaseLevel.BASE_RADIUS;
 	float arrowWidth,arrowHeight;
 
     
@@ -26,11 +28,11 @@ public class Ball {
 		velocityX = d;
 	}
 
-	void moveBall(float radius) {
+	public void moveBall(float radius) {
 
-			arrowX = Levels.arrowX;
-			arrowY = Levels.arrowY;
-			manX = Levels.manX;
+			arrowX = BaseLevel.arrowX;
+			arrowY = BaseLevel.arrowY;
+			manX = BaseLevel.manX;
 		    ballHit = 0;
 		    manballCollison= false;
 
@@ -40,7 +42,7 @@ public class Ball {
 			if ((ballX > W - radius ) || (ballX < 0)) {
 				velocityX = -velocityX;
 			}
-			if(Levels.currentLevel==5){
+			if(MainActivity.currentLevel==4){
 			if(((ballX>47*W/100-radius)&&ballX<53*W/100)||((ballX<53*W/100)&&ballX>47*W/100)){
 				velocityX = -velocityX;
 			}
@@ -58,10 +60,10 @@ public class Ball {
 			
 				velocityY = velocityY + gravity;
 		
-				if(Levels.powerUpArrow)	{
+				if(BaseLevel.powerUpArrow)	{
 					arrowWidth = 15*W/1000;
 					arrowHeight = H;
-				}else if(Levels.powerUpTornado){
+				}else if(BaseLevel.powerUpTornado){
 					arrowWidth = 45*W/1000;
 					arrowHeight = arrowY+30*W/1000;
 				}

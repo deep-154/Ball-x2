@@ -8,7 +8,7 @@ import android.hardware.SensorManager;
 
 public class AccelerometerData extends Activity implements SensorEventListener {
 
-	static	float sensorX;
+	public static float sensorX;
 		
 	public void registerSensor(Sensor s,SensorManager sm){	
 		sm.registerListener(this, s, SensorManager.SENSOR_DELAY_GAME);

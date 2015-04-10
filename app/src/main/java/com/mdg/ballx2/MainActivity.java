@@ -9,33 +9,39 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.logging.Level;
+import com.mdg.ballx2.Levels.BaseLevel;
+import com.mdg.ballx2.Levels.Level2;
+import com.mdg.ballx2.Levels.Level3;
+import com.mdg.ballx2.Levels.Level4;
+import com.mdg.ballx2.Levels.Level5;
+import com.mdg.ballx2.Levels.Level6;
+import com.mdg.ballx2.Levels.Level7;
+
+import java.util.jar.Attributes;
 
 
-public class MainActivity extends Activity{
+public class MainActivity extends Activity implements BaseLevel.onStageChangeListener{
 
     SensorManager sensorManager;
     public Sensor sensor;
-    static MainActivity activity;
+    public static MainActivity activity;
     int height,width;
     AccelerometerData data = new AccelerometerData();
-    static TextView noOflevel,scoreView,lifeView;
+    public static TextView noOflevel,scoreView,lifeView;
     ImageButton pause,play;
+    public RelativeLayout relativeLayout;
+    public static int currentLevel = 2,score =0,noOflife =5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class MainActivity extends Activity{
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(),
                 "fonts/chewy.ttf");
-        Levels.pauseGame = true;
+        BaseLevel.pauseGame = true;
 
 
         noOflevel = (TextView)findViewById(R.id.levelTitle);
@@ -95,7 +101,8 @@ public class MainActivity extends Activity{
                 height = size.y;
             }
         }
-        final RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.mainView);
+         relativeLayout = (RelativeLayout)findViewById(R.id.mainView);
+
         pause = new ImageButton(this);
         pause.setBackgroundResource(R.drawable.pausebtnbackground);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -105,12 +112,10 @@ public class MainActivity extends Activity{
         relativeLayout.addView(pause,params);
 
         play = (ImageButton)findViewById(R.id.play);
-
-
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Levels.pauseGame=true;
+                BaseLevel.pauseGame=true;
                 play.setVisibility(View.VISIBLE);
                 pause.setClickable(false);
             }
@@ -120,7 +125,7 @@ public class MainActivity extends Activity{
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Levels.pauseGame=false;
+                BaseLevel.pauseGame=false;
                 pause.setClickable(true);
                 play.setVisibility(View.INVISIBLE);
             }
@@ -164,7 +169,7 @@ public class MainActivity extends Activity{
         //Handle the back button
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             //Ask the user if they want to quit
-            Levels.pauseGame = true;
+            BaseLevel.pauseGame = true;
             AlertDialog.Builder dBuilder=    new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Quit")
@@ -173,9 +178,11 @@ public class MainActivity extends Activity{
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
-                            //Stop the activity
+                           //Stop the activity
                             finish();
+                            currentLevel = 1;
+                            noOflife = 5;
+                            score = 0;
                         }
 
                     })
@@ -184,7 +191,7 @@ public class MainActivity extends Activity{
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
-                            Levels.pauseGame = false;
+                            BaseLevel.pauseGame = false;
                         }
                     })
                     .setCancelable(false);
@@ -210,7 +217,7 @@ public class MainActivity extends Activity{
     @Override
     protected void onPause() {
         super.onPause();
-        Levels.pauseGame = true;
+        BaseLevel.pauseGame = true;
     }
 
     @Override
@@ -220,7 +227,6 @@ public class MainActivity extends Activity{
         if(sensor!=null){
             data.unregisterSensor(sensor, sensorManager);
         }
-        Log.e("StopCalled", "");
        /* if (mediaPlayer != null){
             mediaPlayer.stop();
             if (isFinishing()){
@@ -228,6 +234,47 @@ public class MainActivity extends Activity{
                 mediaPlayer.release();
             }
         }*/
+    }
+
+
+    @Override
+    public void onStageChanged(int runningLevel,int life) {
+
+        noOflife = life;
+        View v = findViewById(R.id.myView);
+        int index =0;
+        if(v!=null) {
+             index = relativeLayout.indexOfChild(v);
+            relativeLayout.removeView(v);
+        }
+        View gameView = null;
+        switch (runningLevel) {
+
+            case 2:
+                gameView = new Level2(getApplicationContext(),null);
+                break;
+            case 3:
+               gameView = new Level3(getApplicationContext(),null);
+                break;
+            case 4:
+                gameView= new Level4(getApplicationContext(),null);
+                break;
+            case 5:
+                gameView = new Level5(getApplicationContext(),null);
+                break;
+            case 6:
+                gameView = new Level6(getApplicationContext(),null);
+                break;
+            case 7:
+               gameView= new Level7(getApplicationContext(),null);
+                break;
+
+        }
+
+        gameView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        gameView.setId(R.id.myView);
+        relativeLayout.addView(gameView,index);
+
     }
 
 

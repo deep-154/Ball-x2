@@ -6,17 +6,13 @@
     android:background="@drawable/layout">
 
 
-
-        <view
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            class="com.mdg.ballx2.Levels"
-            android:id="@+id/view"
-            android:layout_alignParentTop="true"
-            android:layerType="hardware"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-
+    <view
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="com.mdg.ballx2.Levels.Level2"
+        android:id="@+id/myView"
+        android:layerType="hardware"
+        android:layout_centerHorizontal="true" />
 
 
     <TextView
@@ -78,5 +74,7 @@
         android:scaleType="fitXY"
         android:background="@null"
         />
+
+
 
 </RelativeLayout>

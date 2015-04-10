@@ -10,9 +10,9 @@ import android.view.Window;
 public class MainMenu extends Activity {
 
 	static MediaPlayer mediaPlayer;
-	static int selectMethod = 1;
-    static boolean playMusic = true;
-   static MainMenu activity;
+	public static int selectMethod = 1;
+   public static boolean playMusic = true;
+    static MainMenu activity;
 
 
 	
