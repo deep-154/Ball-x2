@@ -1,39 +1,64 @@
-#built application files
-*.apk
-*.ap_
+## Java
 
-# files for the dex VM
-*.dex
-
-# Java class files
 *.class
+*.war
+*.ear
+hs_err_pid*
 
-# generated files
-bin/
-gen/
+## GWT
+war/
+html/war/gwt_bree/
+html/gwt-unitCache/
+.apt_generated/
+html/war/WEB-INF/deploy/
+html/war/WEB-INF/classes/
+.gwt/
+gwt-unitCache/
+www-test/
+.gwt-tmp/
 
-# Local configuration file (sdk path, etc)
-local.properties
+## Android Studio and Intellij and Android in general
+android/libs/armeabi/
+android/libs/armeabi-v7a/
+android/libs/x86/
+android/gen/
+.idea/
+*.ipr
+*.iws
+*.iml
+out/
+com_crashlytics_export_strings.xml
 
-# Windows thumbnail db
-Thumbs.db
-
-# OSX files
-.DS_Store
-
-# Eclipse project files
+## Eclipse
 .classpath
 .project
-
-# Android Studio
-.idea
-#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
-.gradle
-build/
-/*/out
-/*/*/build
-/*/*/production
-*.iws
-*.ipr
-*~
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
 *.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+
+## NetBeans
+**/nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+## Gradle
+
+.gradle
+gradle-app.setting
+build/
+
+## OS Specific
+.DS_Store
