@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
  * @author DEEPANKAR
  * @since 20-03-2016.
  */
-public class Camera implements Component {
+public class CameraComponent implements Component {
 
     public OrthographicCamera camera;
 }

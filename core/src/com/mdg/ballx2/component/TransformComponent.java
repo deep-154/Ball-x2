@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector3;
  * @since 17-03-2016.
  */
 
-public class Transform implements Component {
+public class TransformComponent implements Component {
 
     public Vector3 position = new Vector3();
     public float   rotation = 0f;
