@@ -4,7 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mdg.ballx2.screen.TestScreen;
+import com.mdg.ballx2.screens.TestScreen;
+import com.mdg.ballx2.screens.start.PlayGameScreen;
 
 public class Ballx2 extends Game {
 
@@ -19,7 +20,7 @@ public class Ballx2 extends Game {
 		//Loading required res
 
 		//setting first screen
-		setScreen(new TestScreen(this));
+		setScreen(new PlayGameScreen(this));
 	}
 
 	@Override
