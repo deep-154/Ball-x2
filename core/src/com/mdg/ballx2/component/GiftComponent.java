@@ -8,6 +8,12 @@ import com.badlogic.ashley.core.Component;
  */
 public class GiftComponent implements Component {
 
-    public static final float WIDTH = 30f;
-    public static final float HEIGHT = 40f;
+    public float width = 0f;
+    public float height = 0f;
+    public int timeToDestroy; // in seconds
+
+    public GiftComponent(float width, float height){
+        this.width = width;
+        this.height = height;
+    }
 }

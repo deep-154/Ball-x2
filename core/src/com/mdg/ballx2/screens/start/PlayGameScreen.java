@@ -11,10 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mdg.ballx2.Ballx2;
-import com.mdg.ballx2.Constants;
+import com.mdg.ballx2.data.Constants;
 import com.mdg.ballx2.screens.BaseScreen;
 import com.mdg.ballx2.screens.TestScreen;
 
@@ -45,15 +44,12 @@ public class PlayGameScreen extends BaseScreen {
         setUpSkin();
 
         Table table = new Table();
-        table.setWidth(stage.getWidth());
-        table.setPosition(0, Constants.worldHeight);
-        table.align(Align.center | Align.top);
-
-        table.padTop(50);
+        table.setFillParent(true);
 
         startButton = new TextButton("New Game",skin,"default");
         quitButton = new TextButton("Quit Game",skin,"default");
 
+        table.defaults().fill().width(100).height(60);
         table.add(startButton).padBottom(30);
         table.row();
         table.add(quitButton);
@@ -67,10 +63,16 @@ public class PlayGameScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClearColor(0.5f, 0.2f, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    @Override
+    public void dispose () {
+        stage.dispose();
+        skin.dispose();
     }
 
 

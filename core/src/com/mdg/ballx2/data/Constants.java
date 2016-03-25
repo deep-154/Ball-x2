@@ -1,4 +1,4 @@
-package com.mdg.ballx2;
+package com.mdg.ballx2.data;
 
 /**
  * @author DEEPANKAR

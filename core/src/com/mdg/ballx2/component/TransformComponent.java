@@ -11,7 +11,13 @@ import com.badlogic.gdx.math.Vector3;
 
 public class TransformComponent implements Component {
 
-    public Vector3 position = new Vector3();
-    public float   rotation = 0f;
-    public Vector2 scale    = new Vector2(1.0f,1.0f);
+    public Vector3 position;
+    public float rotation;
+    public Vector2 scale;
+
+    public TransformComponent(Vector3 position){
+        this.position = position;
+        this.rotation = 0f;
+        this.scale    = new Vector2(1.0f,1.0f);
+    }
 }

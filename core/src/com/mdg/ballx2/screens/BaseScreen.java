@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mdg.ballx2.Ballx2;
-import com.mdg.ballx2.Constants;
 
 /**
  * @author DEEPANKAR
@@ -22,13 +21,12 @@ public abstract class BaseScreen implements Screen {
         mGame = game;
         mSpriteBatch = game.batch;
         mFont = game.font;
+        mCamera = game.mCamera;
     }
 
     @Override
     public void show() {
-        mCamera = new OrthographicCamera(Constants.worldWidth, Constants.worldHeight);
-        mCamera.position.set(mCamera.viewportWidth / 2f, mCamera.viewportHeight / 2f, 0);
-        mCamera.update();
+
     }
 
     @Override
