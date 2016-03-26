@@ -81,7 +81,7 @@ public class PlayGameScreen extends BaseScreen {
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
         skin.add("white", new Texture(pixmap));
-        skin.add("default", mFont);
+        skin.add("default", mGame.font);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);

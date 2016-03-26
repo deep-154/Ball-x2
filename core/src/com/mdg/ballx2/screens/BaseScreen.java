@@ -13,14 +13,10 @@ import com.mdg.ballx2.Ballx2;
 public abstract class BaseScreen implements Screen {
 
     protected Ballx2 mGame;
-    protected SpriteBatch mSpriteBatch;
-    protected BitmapFont  mFont;
     protected OrthographicCamera mCamera;
 
     public BaseScreen(final Ballx2 game){
         mGame = game;
-        mSpriteBatch = game.batch;
-        mFont = game.font;
         mCamera = game.mCamera;
     }
 

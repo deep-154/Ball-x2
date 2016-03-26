@@ -12,6 +12,8 @@ public class Ballx2 extends Game {
 	public BitmapFont font;
     public OrthographicCamera mCamera;
 
+    public GameManager mGameManager;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -23,6 +25,9 @@ public class Ballx2 extends Game {
         mCamera.update();
 
 		//Load required res
+
+        //Initialize GameManager
+        mGameManager = GameManager.getGameManager();
 
 		//setting first screen
 		setScreen(new PlayGameScreen(this));

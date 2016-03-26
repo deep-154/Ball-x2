@@ -25,13 +25,13 @@ public class TestScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        mSpriteBatch.setProjectionMatrix(mCamera.combined);
+        mGame.batch.setProjectionMatrix(mCamera.combined);
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        mSpriteBatch.begin();
-        mSpriteBatch.draw(img, 0, 0,360,360);
-        mSpriteBatch.end();
+        mGame.batch.begin();
+        mGame.batch.draw(img, 0, 0,360,360);
+        mGame.batch.end();
     }
 
 }

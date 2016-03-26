@@ -13,13 +13,12 @@ import com.mdg.ballx2.component.VelocityComponent;
  */
 public class PlayerSystem extends IteratingSystem {
 
-    private static final Family mFamily = Family.all(
-            PlayerComponent.class,
-            TransformComponent.class,
-            VelocityComponent.class).get();
+    private Family mFamily;
 
     public PlayerSystem() {
-        super(mFamily);
+        super(Family.all(PlayerComponent.class, TransformComponent.class,
+                VelocityComponent.class).get());
+        mFamily = getFamily();
     }
 
 
