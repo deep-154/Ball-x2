@@ -1,5 +1,9 @@
 package com.mdg.ballx2.screens.game;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector3;
 import com.mdg.ballx2.Ballx2;
 import com.mdg.ballx2.screens.BaseScreen;
 
@@ -18,30 +22,35 @@ import com.mdg.ballx2.screens.BaseScreen;
  */
 public class BaseLevelScreen extends BaseScreen {
 
-    float accelX = 0.0f;
+    private Application.ApplicationType appType;
+
+    public float accelX = 0.0f;
+    public Vector3 touch;
 
     public BaseLevelScreen(Ballx2 game) {
         super(game);
+        appType = Gdx.app.getType();
+        touch = new Vector3(0,0,0);
     }
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown (int x, int y, int pointer, int button) {
+                mCamera.unproject(touch.set(x, y, 0));
+                return true;
+            }
+        });
     }
 
     @Override
     public void render(float delta) {
 
-//        Application.ApplicationType appType = Gdx.app.getType();
-//
-//        if (appType == Application.ApplicationType.Android || appType == Application.ApplicationType.iOS) {
-//            accelX = Gdx.input.getAccelerometerX();
-//        } else {
-//            if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) accelX = 5f;
-//            if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) accelX = -5f;
-//        }
+        if (appType == Application.ApplicationType.Android || appType == Application.ApplicationType.iOS) {
+            accelX = Gdx.input.getAccelerometerY();
+        }
 
-        //engine.getSystem(BobSystem.class).setAccelX(accelX);
 
     }
 

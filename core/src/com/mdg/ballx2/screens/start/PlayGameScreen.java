@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mdg.ballx2.Ballx2;
 import com.mdg.ballx2.data.Constants;
 import com.mdg.ballx2.screens.BaseScreen;
-import com.mdg.ballx2.screens.TestScreen;
+import com.mdg.ballx2.screens.game.BaseLevelScreen;
 
 /**
  * @author DEEPANKAR
@@ -94,15 +94,14 @@ public class PlayGameScreen extends BaseScreen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("Clicked Start","Yep, you did");
-                mGame.setScreen(new TestScreen(mGame));
+                mGame.setScreen(new BaseLevelScreen(mGame));
             }
         });
 
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("Clicked quit", "Yep, you did");
+
             }
         });
     }

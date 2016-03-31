@@ -2,8 +2,6 @@ package com.mdg.ballx2.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mdg.ballx2.Ballx2;
 
 /**

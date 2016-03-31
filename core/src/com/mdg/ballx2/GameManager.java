@@ -16,7 +16,10 @@ import com.badlogic.ashley.core.PooledEngine;
 public class GameManager {
 
     private static GameManager mGameManager;
-    public PooledEngine mGameEngine;
+    private PooledEngine mGameEngine;
+
+    public boolean isGameRunning;
+    public int currentLevel;
 
     public static GameManager getGameManager(){
         if(mGameManager== null) mGameManager = new GameManager();
@@ -25,6 +28,10 @@ public class GameManager {
 
     private GameManager(){
         mGameEngine = new PooledEngine(25,80,100,250);
+    }
+
+    public PooledEngine getGameEngine(){
+        return mGameEngine;
     }
 
 
